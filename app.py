@@ -2,15 +2,13 @@
 app.py
 Interface da aplicação Alter (Streamlit) e orquestração do fluxo.
 
-Segue o fluxo de seis etapas do projeto, por agora só com a categoria
-de liquidez:
+Fluxo:
+  0. Contexto: setor de atividade e nível de linguagem do diagnóstico.
   1. Entrada: upload do PDF.
   2. Extração: a IA lê o documento e propõe os dados.
   3. Confirmação: o utilizador vê e corrige os dados antes de avançar.
-  4. (Para já a liquidez é a única análise; a seleção entra quando
-     houver mais categorias.)
-  5. Cálculo determinístico dos rácios (liquidez.py).
-  6. Diagnóstico em linguagem natural pela IA.
+  4. Cálculo determinístico dos rácios (liquidez.py).
+  5. Diagnóstico em linguagem natural pela IA, contextualizado pelo setor.
 """
 
 import os
@@ -26,23 +24,53 @@ load_dotenv()
 cliente = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 MODELO_DIAGNOSTICO = "claude-sonnet-4-6"
 
+SETORES = [
+    "Comércio a retalho",
+    "Comércio por grosso",
+    "Indústria transformadora",
+    "Construção e imobiliário",
+    "Serviços profissionais",
+    "Restauração e hotelaria",
+    "Tecnologia e software",
+    "Saúde e farmácia",
+    "Transportes e logística",
+    "Agricultura e agro-indústria",
+    "Outro / Não especificado",
+]
 
-# ---------------------------------------------------------------------------
-# PASSO 6 (parte da IA): gerar o diagnóstico a partir dos rácios já calculados
-# A IA recebe números prontos. Não calcula nada, só interpreta.
-# ---------------------------------------------------------------------------
+NIVEIS_LINGUAGEM = {
+    1: (
+        "Simples",
+        "Usa linguagem simples e acessível a alguém sem formação financeira. "
+        "Evita jargão técnico. Explica os conceitos como se estivesses a falar "
+        "com o dono de um pequeno negócio.",
+    ),
+    2: (
+        "Equilibrada",
+        "Usa linguagem moderadamente técnica, adequada a um gestor ou empresário "
+        "com conhecimentos básicos de finanças.",
+    ),
+    3: (
+        "Técnica",
+        "Usa linguagem técnica e especializada, adequada a um analista financeiro "
+        "ou contabilista. Podes usar terminologia SNC sem precisar de explicar os conceitos.",
+    ),
+}
 
-def gerar_diagnostico(racios):
+
+def gerar_diagnostico(racios, setor, nivel_linguagem):
+    _, instrucao_linguagem = NIVEIS_LINGUAGEM[nivel_linguagem]
     linhas = "\n".join(
         f"- {r['racio']}: {r['valor']} ({r['avaliacao']})" for r in racios
     )
     instrucao = (
-        "És um analista financeiro a dar uma segunda opinião sobre a liquidez "
-        "de uma empresa. Com base nos rácios já calculados em baixo, escreve um "
-        "diagnóstico curto em português europeu, claro e acessível a quem não "
-        "domina finanças. Identifica pontos fortes, sinais de alerta e uma "
-        "conclusão. Não inventes valores nem inventes outros rácios; usa apenas "
-        "os que te são dados.\n\n"
+        f"És um analista financeiro a dar uma segunda opinião sobre a liquidez "
+        f"de uma empresa do setor '{setor}'. "
+        f"{instrucao_linguagem} "
+        "Com base nos rácios calculados em baixo, escreve um diagnóstico em "
+        "português europeu que identifique pontos fortes, sinais de alerta e uma "
+        "conclusão. Contextualiza os valores face ao que é habitual no setor indicado. "
+        "Não inventes valores nem outros rácios; usa apenas os que te são dados.\n\n"
         f"RÁCIOS DE LIQUIDEZ:\n{linhas}"
     )
     resposta = cliente.messages.create(
@@ -55,8 +83,6 @@ def gerar_diagnostico(racios):
 
 # ---------------------------------------------------------------------------
 # INTERFACE
-# st.session_state guarda o estado entre cliques (o Streamlit recorre o
-# script inteiro a cada interação; sem isto, os dados perdiam-se).
 # ---------------------------------------------------------------------------
 
 st.set_page_config(page_title="Alter", page_icon="📊")
@@ -67,6 +93,22 @@ if "dados_extraidos" not in st.session_state:
     st.session_state.dados_extraidos = None
 if "texto_pdf" not in st.session_state:
     st.session_state.texto_pdf = None
+
+# --- Passo 0: contexto ---
+st.header("0. Contexto da empresa")
+col1, col2 = st.columns(2)
+with col1:
+    setor = st.selectbox("Setor de atividade", SETORES, key="setor")
+with col2:
+    nivel_linguagem = st.select_slider(
+        "Nível de linguagem do diagnóstico",
+        options=[1, 2, 3],
+        value=2,
+        format_func=lambda x: NIVEIS_LINGUAGEM[x][0],
+        key="nivel_linguagem",
+    )
+
+st.divider()
 
 # --- Passo 1: entrada ---
 st.header("1. Carregar balanço (PDF)")
@@ -104,7 +146,7 @@ if st.session_state.dados_extraidos is not None:
     inv = st.number_input("Inventários", value=float(d.get("inventarios") or 0.0))
     caixa = st.number_input("Caixa e Depósitos Bancários", value=float(d.get("caixa_e_depositos") or 0.0))
 
-    # --- Passos 5 e 6: cálculo e diagnóstico ---
+    # --- Passos 4 e 5: cálculo e diagnóstico ---
     if st.button("Analisar liquidez"):
         if pc == 0:
             st.error("O Passivo Corrente não pode ser zero (é o denominador dos rácios).")
@@ -131,4 +173,4 @@ if st.session_state.dados_extraidos is not None:
 
             st.header("4. Diagnóstico")
             with st.spinner("A gerar o diagnóstico..."):
-                st.write(gerar_diagnostico(racios))
+                st.write(gerar_diagnostico(racios, setor, nivel_linguagem))
