@@ -106,8 +106,8 @@ with col1:
         help=(
             "O setor é usado para contextualizar o diagnóstico — "
             "os rácios de referência variam bastante entre setores.\n\n"
-            "Exemplo: uma Liquidez Geral de 1.2 é normal no retalho "
-            "(inventário rotativo) mas preocupante na indústria transformadora.\n\n"
+            "*Exemplo: uma Liquidez Geral de 1.2 é normal no retalho "
+            "(inventário rotativo) mas preocupante na indústria transformadora.*\n\n"
             "Futuramente será cruzado com o CAE para benchmarks específicos."
         ),
     )
