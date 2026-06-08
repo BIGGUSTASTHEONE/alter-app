@@ -121,6 +121,14 @@ with col3:
         value=2,
         format_func=lambda x: NIVEIS_LINGUAGEM[x][0],
         key="nivel_linguagem",
+        help=(
+            "**Simples** — linguagem acessível, sem jargão. "
+            "Ideal para o dono do negócio sem formação financeira.\n\n"
+            "**Equilibrada** — alguma terminologia financeira. "
+            "Adequada a um gestor com conhecimentos básicos.\n\n"
+            "**Técnica** — linguagem de especialista. "
+            "Adequada a analistas financeiros e contabilistas."
+        ),
     )
 
 st.divider()
