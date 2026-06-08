@@ -103,13 +103,16 @@ with col1:
 with col2:
     dimensao = st.selectbox(
         "Dimensão da empresa",
-        [
-            "Micro (< 10 trabalhadores)",
-            "Pequena (10 a 49 trabalhadores)",
-            "Média (50 a 249 trabalhadores)",
-            "Grande (≥ 250 trabalhadores)",
-        ],
+        ["Micro", "Pequena", "Média", "Grande"],
+        index=1,
         key="dimensao",
+        help=(
+            "Classificação EU/Portugal — basta cumprir dois dos três critérios:\n\n"
+            "**Micro** — < 10 trabalhadores · volume de negócios ≤ 2 M€ · balanço ≤ 2 M€\n\n"
+            "**Pequena** — < 50 trabalhadores · volume de negócios ≤ 10 M€ · balanço ≤ 10 M€\n\n"
+            "**Média** — < 250 trabalhadores · volume de negócios ≤ 50 M€ · balanço ≤ 43 M€\n\n"
+            "**Grande** — ≥ 250 trabalhadores ou volume de negócios > 50 M€ ou balanço > 43 M€"
+        ),
     )
 with col3:
     nivel_linguagem = st.select_slider(
