@@ -1,0 +1,20 @@
+# Chave de API e segredos, NUNCA enviar para o GitHub
+.env
+
+# Ambientes virtuais Python
+venv/
+.venv/
+env/
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Ficheiros do sistema e do editor
+.DS_Store
+.vscode/
+*.log
+
+# Ficheiros temporários de teste (PDFs, etc.) que não devem ir para o repositório
+# Comenta esta linha se quiseres versionar o PDF de teste
+*.pdf
