@@ -58,18 +58,19 @@ NIVEIS_LINGUAGEM = {
 }
 
 
-def gerar_diagnostico(racios, setor, nivel_linguagem):
+def gerar_diagnostico(racios, setor, dimensao, nivel_linguagem):
     _, instrucao_linguagem = NIVEIS_LINGUAGEM[nivel_linguagem]
     linhas = "\n".join(
         f"- {r['racio']}: {r['valor']} ({r['avaliacao']})" for r in racios
     )
     instrucao = (
         f"És um analista financeiro a dar uma segunda opinião sobre a liquidez "
-        f"de uma empresa do setor '{setor}'. "
+        f"de uma empresa do setor '{setor}', de dimensão '{dimensao}'. "
         f"{instrucao_linguagem} "
         "Com base nos rácios calculados em baixo, escreve um diagnóstico em "
         "português europeu que identifique pontos fortes, sinais de alerta e uma "
-        "conclusão. Contextualiza os valores face ao que é habitual no setor indicado. "
+        "conclusão. Contextualiza os valores face ao que é habitual no setor e "
+        "dimensão indicados. "
         "Não inventes valores nem outros rácios; usa apenas os que te são dados.\n\n"
         f"RÁCIOS DE LIQUIDEZ:\n{linhas}"
     )
@@ -96,10 +97,21 @@ if "texto_pdf" not in st.session_state:
 
 # --- Passo 0: contexto ---
 st.header("0. Contexto da empresa")
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 with col1:
     setor = st.selectbox("Setor de atividade", SETORES, key="setor")
 with col2:
+    dimensao = st.selectbox(
+        "Dimensão da empresa",
+        [
+            "Micro (< 10 trabalhadores)",
+            "Pequena (10 a 49 trabalhadores)",
+            "Média (50 a 249 trabalhadores)",
+            "Grande (≥ 250 trabalhadores)",
+        ],
+        key="dimensao",
+    )
+with col3:
     nivel_linguagem = st.select_slider(
         "Nível de linguagem do diagnóstico",
         options=[1, 2, 3],
@@ -173,4 +185,4 @@ if st.session_state.dados_extraidos is not None:
 
             st.header("4. Diagnóstico")
             with st.spinner("A gerar o diagnóstico..."):
-                st.write(gerar_diagnostico(racios, setor, nivel_linguagem))
+                st.write(gerar_diagnostico(racios, setor, dimensao, nivel_linguagem))
