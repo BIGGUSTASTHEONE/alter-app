@@ -99,7 +99,18 @@ if "texto_pdf" not in st.session_state:
 st.header("0. Contexto da empresa")
 col1, col2, col3 = st.columns(3)
 with col1:
-    setor = st.selectbox("Setor de atividade", SETORES, key="setor")
+    setor = st.selectbox(
+        "Setor de atividade",
+        SETORES,
+        key="setor",
+        help=(
+            "O setor é usado para contextualizar o diagnóstico — "
+            "os rácios de referência variam bastante entre setores.\n\n"
+            "Exemplo: uma Liquidez Geral de 1.2 é normal no retalho "
+            "(inventário rotativo) mas preocupante na indústria transformadora.\n\n"
+            "Futuramente será cruzado com o CAE para benchmarks específicos."
+        ),
+    )
 with col2:
     dimensao = st.selectbox(
         "Dimensão da empresa",
