@@ -61,17 +61,20 @@ NIVEIS_LINGUAGEM = {
 def gerar_diagnostico(racios, setor, dimensao, nivel_linguagem):
     _, instrucao_linguagem = NIVEIS_LINGUAGEM[nivel_linguagem]
     linhas = "\n".join(
-        f"- {r['racio']}: {r['valor']} ({r['avaliacao']})" for r in racios
+        f"- {r['racio']}: {r['valor']} ({r['avaliacao']}, "
+        f"melhor que {r['percentil']}% das empresas do setor)"
+        for r in racios
     )
     instrucao = (
         f"És um analista financeiro a dar uma segunda opinião sobre a liquidez "
         f"de uma empresa do setor '{setor}', de dimensão '{dimensao}'. "
         f"{instrucao_linguagem} "
-        "Com base nos rácios calculados em baixo, escreve um diagnóstico em "
-        "português europeu que identifique pontos fortes, sinais de alerta e uma "
-        "conclusão. Contextualiza os valores face ao que é habitual no setor e "
-        "dimensão indicados. "
-        "Não inventes valores nem outros rácios; usa apenas os que te são dados.\n\n"
+        "Com base nos rácios e posições sectoriais calculados em baixo, escreve "
+        "um diagnóstico em português europeu que identifique pontos fortes, sinais "
+        "de alerta e uma conclusão. Os percentis são factos matemáticos calculados "
+        "com dados do Banco de Portugal — usa-os para contextualizar, mas não os "
+        "recalcules nem os interpretes de forma diferente do que está indicado. "
+        "Não inventes valores nem outros rácios.\n\n"
         f"RÁCIOS DE LIQUIDEZ:\n{linhas}"
     )
     resposta = cliente.messages.create(
@@ -191,11 +194,14 @@ if st.session_state.dados_extraidos is not None:
                 "inventarios": inv,
                 "caixa_e_depositos": caixa,
             }
-            racios = liquidez.analisar_liquidez(dados)
+            racios = liquidez.analisar_liquidez(dados, setor, dimensao)
 
             st.header("3. Rácios de liquidez")
             tabela = pd.DataFrame(racios)
-            tabela.columns = ["Rácio", "Fórmula", "Valor", "Avaliação"]
+            tabela.columns = ["Rácio", "Fórmula", "Valor", "Avaliação", "Percentil no setor"]
+            tabela["Percentil no setor"] = tabela["Percentil no setor"].apply(
+                lambda p: f"melhor que {p}%"
+            )
             st.table(tabela)
 
             st.subheader("Comparação visual")
@@ -208,3 +214,12 @@ if st.session_state.dados_extraidos is not None:
             st.header("4. Diagnóstico")
             with st.spinner("A gerar o diagnóstico..."):
                 st.write(gerar_diagnostico(racios, setor, dimensao, nivel_linguagem))
+
+            from benchmarks import FONTE
+            st.divider()
+            st.caption(
+                f"Dados comparativos: {FONTE['nome']} · "
+                f"Exercício {FONTE['ano_dados']} · "
+                f"Consultado em {FONTE['data_consulta']} · "
+                f"{FONTE['url']}"
+            )

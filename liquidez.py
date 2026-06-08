@@ -1,38 +1,15 @@
 """
 liquidez.py
-Cálculo determinístico dos rácios de liquidez e respetiva avaliação
-face a benchmarks de referência.
+Cálculo determinístico dos rácios de liquidez, avaliação face a benchmarks
+sectoriais e estimativa de percentil dentro do setor e dimensão.
 
 Nota de arquitetura: este ficheiro NÃO usa inteligência artificial.
-São apenas operações matemáticas e comparações com valores de referência.
-A interpretação em linguagem natural acontece noutro sítio (na API).
+São apenas operações matemáticas. A interpretação em linguagem natural
+acontece noutro sítio (na API), e recebe os percentis como factos prontos.
 """
 
-# ---------------------------------------------------------------------------
-# BENCHMARKS (isolados de propósito)
-# Estes valores são referências gerais fixas, suficientes para validar o
-# esqueleto da aplicação. Variam muito por setor; tornar os benchmarks
-# dependentes do setor fica como otimização futura. Para trocar um benchmark,
-# muda-se aqui e em mais lado nenhum.
-# ---------------------------------------------------------------------------
+import benchmarks
 
-BENCHMARKS = {
-    "liquidez_geral": {
-        "confortavel": 1.5,   # >= 1,5 confortável
-        "minimo": 1.0,        # 1,0 a 1,5 aceitável mas a vigiar; < 1,0 alerta
-    },
-    "liquidez_reduzida": {
-        "confortavel": 1.0,   # >= 1,0 confortável
-        "minimo": 0.8,        # 0,8 a 1,0 aceitável; < 0,8 a vigiar
-    },
-    "liquidez_imediata": {
-        "saudavel": 0.2,      # >= 0,2 habitualmente citado como saudável
-    },
-}
-
-# Dados do balanço que esta categoria precisa.
-# Serve a lógica de "dados primeiro": só se mostra a análise de liquidez
-# quando estes quatro valores estão disponíveis.
 DADOS_NECESSARIOS = [
     "ativo_corrente",
     "passivo_corrente",
@@ -46,90 +23,109 @@ DADOS_NECESSARIOS = [
 # ---------------------------------------------------------------------------
 
 def calcular_liquidez_geral(ativo_corrente, passivo_corrente):
-    """Ativo Corrente / Passivo Corrente."""
     return ativo_corrente / passivo_corrente
 
 
 def calcular_liquidez_reduzida(ativo_corrente, inventarios, passivo_corrente):
-    """(Ativo Corrente - Inventários) / Passivo Corrente."""
     return (ativo_corrente - inventarios) / passivo_corrente
 
 
 def calcular_liquidez_imediata(caixa_e_depositos, passivo_corrente):
-    """Caixa e Depósitos Bancários / Passivo Corrente."""
     return caixa_e_depositos / passivo_corrente
 
 
 # ---------------------------------------------------------------------------
-# AVALIAÇÃO FACE AOS BENCHMARKS
-# Devolve uma etiqueta simples ("confortável", "a vigiar", "alerta") para
-# cada rácio. É um resumo determinístico; a leitura financeira de fundo fica
-# para o diagnóstico da IA.
+# PERCENTIL POR INTERPOLAÇÃO LINEAR
+# Dado um valor e os três quartis (P25/P50/P75), estima em que percentil
+# da distribuição o valor se encontra.
+# Não envolve IA — é math pura aplicada aos dados do Banco de Portugal.
 # ---------------------------------------------------------------------------
 
-def avaliar_liquidez_geral(valor):
-    b = BENCHMARKS["liquidez_geral"]
-    if valor >= b["confortavel"]:
-        return "confortável"
-    if valor >= b["minimo"]:
-        return "aceitável, a vigiar"
-    return "sinal de alerta"
+def calcular_percentil(valor, p25, p50, p75):
+    """
+    Estima o percentil de um valor usando interpolação linear entre P25, P50 e P75.
+    Extrapola suavemente abaixo do P25 e acima do P75.
+    Resultado entre 1 e 99.
+    """
+    if valor <= p25:
+        p0 = p25 - 2 * (p50 - p25)
+        if p0 >= p25:
+            return 1
+        return max(1, round(25 * (valor - p0) / (p25 - p0)))
+    elif valor <= p50:
+        return round(25 + 25 * (valor - p25) / (p50 - p25))
+    elif valor <= p75:
+        return round(50 + 25 * (valor - p50) / (p75 - p50))
+    else:
+        p100 = p75 + 2 * (p75 - p50)
+        if p100 <= p75:
+            return 99
+        return min(99, round(75 + 25 * (valor - p75) / (p100 - p75)))
 
 
-def avaliar_liquidez_reduzida(valor):
-    b = BENCHMARKS["liquidez_reduzida"]
-    if valor >= b["confortavel"]:
-        return "confortável"
-    if valor >= b["minimo"]:
-        return "aceitável"
-    return "a vigiar"
-
-
-def avaliar_liquidez_imediata(valor):
-    b = BENCHMARKS["liquidez_imediata"]
-    if valor >= b["saudavel"]:
-        return "saudável"
-    return "baixa, mas não necessariamente preocupante"
+def avaliar_racio(valor, bm):
+    """
+    Devolve (avaliacao, percentil) com base nos benchmarks P25/P50/P75.
+    A avaliação é determinística — apenas compara números.
+    """
+    percentil = calcular_percentil(valor, bm["p25"], bm["p50"], bm["p75"])
+    if valor >= bm["p75"]:
+        avaliacao = "confortável"
+    elif valor >= bm["p25"]:
+        avaliacao = "dentro da norma"
+    else:
+        avaliacao = "abaixo da norma"
+    return avaliacao, percentil
 
 
 # ---------------------------------------------------------------------------
 # FUNÇÃO PRINCIPAL DA CATEGORIA
-# Recebe os dados confirmados pelo utilizador (um dicionário) e devolve
-# uma lista de rácios, cada um com nome, fórmula, valor e avaliação.
-# É este resultado que vai depois para a tabela, para o gráfico e para a IA.
 # ---------------------------------------------------------------------------
 
-def analisar_liquidez(dados):
+def analisar_liquidez(dados, setor, dimensao):
     """
-    dados: dicionário com as chaves de DADOS_NECESSARIOS.
-    Devolve uma lista de dicionários, um por rácio.
+    dados:    dicionário com as chaves de DADOS_NECESSARIOS
+    setor:    string com o setor de atividade (usado para escolher benchmarks)
+    dimensao: string com a dimensão da empresa (id.)
+
+    Devolve lista de dicionários — um por rácio — com nome, fórmula, valor,
+    avaliação e percentil estimado no setor+dimensão.
     """
     ac = dados["ativo_corrente"]
     pc = dados["passivo_corrente"]
     inv = dados["inventarios"]
     caixa = dados["caixa_e_depositos"]
 
+    bms = benchmarks.obter(setor, dimensao)
+
     geral = calcular_liquidez_geral(ac, pc)
     reduzida = calcular_liquidez_reduzida(ac, inv, pc)
     imediata = calcular_liquidez_imediata(caixa, pc)
+
+    av_geral, pct_geral = avaliar_racio(geral, bms["liquidez_geral"])
+    av_reduzida, pct_reduzida = avaliar_racio(reduzida, bms["liquidez_reduzida"])
+    av_imediata, pct_imediata = avaliar_racio(imediata, bms["liquidez_imediata"])
 
     return [
         {
             "racio": "Liquidez Geral",
             "formula": "Ativo Corrente / Passivo Corrente",
             "valor": round(geral, 2),
-            "avaliacao": avaliar_liquidez_geral(geral),
+            "avaliacao": av_geral,
+            "percentil": pct_geral,
         },
         {
             "racio": "Liquidez Reduzida",
             "formula": "(Ativo Corrente - Inventários) / Passivo Corrente",
             "valor": round(reduzida, 2),
-            "avaliacao": avaliar_liquidez_reduzida(reduzida),
+            "avaliacao": av_reduzida,
+            "percentil": pct_reduzida,
         },
         {
             "racio": "Liquidez Imediata",
             "formula": "Caixa e Depósitos / Passivo Corrente",
             "valor": round(imediata, 2),
-            "avaliacao": avaliar_liquidez_imediata(imediata),
+            "avaliacao": av_imediata,
+            "percentil": pct_imediata,
         },
     ]
