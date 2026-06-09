@@ -120,18 +120,9 @@ hr {{
     border-radius: 8px !important;
     padding: 6px 10px !important;
     transition: all 0.15s !important;
-}}
-[data-testid="stPills"] button:nth-child(1) {{
-    color: #2D9B72 !important;
-    border-color: #2D9B7260 !important;
-}}
-[data-testid="stPills"] button:nth-child(2) {{
-    color: {OURO} !important;
-    border-color: {OURO}60 !important;
-}}
-[data-testid="stPills"] button:nth-child(3) {{
-    color: #7C3AED !important;
-    border-color: #7C3AED60 !important;
+    background: rgba(255,255,255,0.07) !important;
+    color: rgba(255,255,255,0.38) !important;
+    border-color: rgba(255,255,255,0.14) !important;
 }}
 
 /* Botões — ouro sobre navy */
