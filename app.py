@@ -130,8 +130,8 @@ hr {{
     border-color: {OURO}60 !important;
 }}
 [data-testid="stPills"] button:nth-child(3) {{
-    color: {AZUL} !important;
-    border-color: {AZUL}60 !important;
+    color: #7C3AED !important;
+    border-color: #7C3AED60 !important;
 }}
 
 /* Botões — ouro sobre navy */
@@ -395,7 +395,7 @@ with col2:
         ),
     )
 with col3:
-    _OPCOES = {"Simples": (1, "#2D9B72"), "Equilibrada": (2, "#C9912A"), "Técnica": (3, "#1D6FA4")}
+    _OPCOES = {"Simples": (1, "#2D9B72"), "Equilibrada": (2, "#C9912A"), "Técnica": (3, "#7C3AED")}
     nivel_str = st.pills(
         "Nível de linguagem",
         list(_OPCOES.keys()),
@@ -420,11 +420,6 @@ with col3:
         box-shadow: 0 0 10px {_cor}50 !important;
     }}
     </style>
-    <div style="background:{_cor}22;border:1.5px solid {_cor}70;border-radius:8px;
-                padding:7px 12px;text-align:center;margin-top:8px;">
-        <span style="color:{_cor};font-weight:700;font-size:0.85rem;
-                     letter-spacing:0.04em;">{nivel_str.upper()}</span>
-    </div>
     """, unsafe_allow_html=True)
 
 st.divider()
