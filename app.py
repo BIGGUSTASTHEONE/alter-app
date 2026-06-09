@@ -510,12 +510,14 @@ def gerar_diagnostico(racios, categoria, setor, dimensao, nivel_linguagem):
         "de alerta e uma conclusão. Os percentis são factos matemáticos calculados "
         "com dados do SABI — usa-os para contextualizar, mas não os recalcules "
         "nem os interpretes de forma diferente do que está indicado. "
+        "Sê completo mas conciso (cerca de 300 a 450 palavras) e termina sempre a "
+        "conclusão — não deixes frases a meio. "
         f"Não inventes valores nem outros rácios.\n\n"
         f"RÁCIOS DE {categoria.upper()}:\n{linhas}"
     )
     resposta = cliente.messages.create(
         model=MODELO_DIAGNOSTICO,
-        max_tokens=700,
+        max_tokens=1600,
         messages=[{"role": "user", "content": instrucao}],
     )
     return resposta.content[0].text.strip()
