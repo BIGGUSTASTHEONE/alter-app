@@ -389,7 +389,25 @@ with col3:
     _cor = _COR_NIVEL[nivel_linguagem]
     _nome = _NOME_NIVEL[nivel_linguagem]
     st.markdown(f"""
-    <div style="background:{_cor}22;border:1.5px solid {_cor}80;border-radius:8px;
+    <style>
+    /* Thumb do slider */
+    [data-testid="stSlider"] div[role="slider"] {{
+        background-color: {_cor} !important;
+        border-color: {_cor} !important;
+        box-shadow: 0 0 0 5px {_cor}33 !important;
+    }}
+    /* Track preenchido */
+    [data-testid="stSlider"] > div > div > div > div > div > div:first-child {{
+        background: {_cor} !important;
+    }}
+    /* Label do valor selecionado */
+    [data-testid="stSlider"] p,
+    [data-testid="stSlider"] [aria-valuetext] {{
+        color: {_cor} !important;
+        font-weight: 700 !important;
+    }}
+    </style>
+    <div style="background:{_cor}22;border:1.5px solid {_cor}70;border-radius:8px;
                 padding:7px 12px;text-align:center;margin-top:6px;">
         <span style="color:{_cor};font-weight:700;font-size:0.85rem;
                      letter-spacing:0.04em;">{_nome.upper()}</span>
