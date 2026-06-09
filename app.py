@@ -390,21 +390,26 @@ with col3:
     _nome = _NOME_NIVEL[nivel_linguagem]
     st.markdown(f"""
     <style>
-    /* Thumb do slider */
+    /* Esconder a etiqueta flutuante acima do thumb */
+    [data-testid="stSlider"] > div:last-child > div > div > div:last-child {{
+        display: none !important;
+    }}
+    [data-testid="stSlider"] > div:last-child p {{
+        display: none !important;
+    }}
+    /* Thumb */
     [data-testid="stSlider"] div[role="slider"] {{
         background-color: {_cor} !important;
         border-color: {_cor} !important;
         box-shadow: 0 0 0 5px {_cor}33 !important;
     }}
-    /* Track preenchido */
-    [data-testid="stSlider"] > div > div > div > div > div > div:first-child {{
-        background: {_cor} !important;
+    /* Track preenchido (2.º filho do contentor do track) */
+    [data-testid="stSlider"] > div:last-child > div > div > div:nth-child(2) {{
+        background-color: {_cor} !important;
     }}
-    /* Label do valor selecionado */
-    [data-testid="stSlider"] p,
-    [data-testid="stSlider"] [aria-valuetext] {{
-        color: {_cor} !important;
-        font-weight: 700 !important;
+    /* Track preenchido — seletor alternativo */
+    [data-testid="stSlider"] > div:last-child > div > div > div:first-child > div {{
+        background-color: {_cor} !important;
     }}
     </style>
     <div style="background:{_cor}22;border:1.5px solid {_cor}70;border-radius:8px;
