@@ -1,6 +1,6 @@
 # Estado do Projecto — Alter
 
-_Última actualização: 9 de junho de 2026_
+_Última actualização: 9 de junho de 2026 (rev. tarde)_
 
 ## O que está feito
 
@@ -27,7 +27,7 @@ _Última actualização: 9 de junho de 2026_
 ### Contexto da empresa
 - Setor de atividade (11 setores, com tooltip explicativa e exemplo)
 - Dimensão da empresa (Micro/Pequena/Média/Grande, com tooltip com os 3 critérios EU)
-- Nível de linguagem do diagnóstico via `st.pills` (Simples/Equilibrada/Técnica, com tooltip)
+- Nível de linguagem do diagnóstico via pills custom (Simples/Equilibrada/Técnica)
 - Todos os campos passados ao diagnóstico da IA e ao motor de benchmarks
 
 ### Benchmarks sectoriais (dados reais SABI)
@@ -39,13 +39,14 @@ _Última actualização: 9 de junho de 2026_
 - Mapeamento SABI correcto: "liquidez corrente" → Liquidez Geral; "liquidez" → Liquidez Reduzida; solvabilidade ÷ 100
 
 ### Design e identidade visual (completo)
-- Sistema de cores: navy `#0A2540` (fundo), ouro `#C9912A` (acento), verde/âmbar/vermelho (semântico)
+- Sistema de cores: navy `#0A2540` (fundo), ciano `#41c3e0` (acento estrutural), verde/âmbar/vermelho (semântico)
 - Tipografia Inter via Google Fonts
-- Cabeçalho branded "ALTER" com sublinhado dourado
-- Steps com borda esquerda dourada em vez de badges numerados
+- Cabeçalho branded "ALTER" com sublinhado ciano
+- Steps com borda esquerda ciana em vez de badges numerados
+- Dividers horizontais na cor do acento ciano
 - Resultados: cards 2×2 com barra de percentil colorida (verde/âmbar/vermelho por avaliação)
-- Diagnóstico em card com borda dourada — estilo parecer consultivo
-- Nível de linguagem: pills clicáveis com cores Simples=verde, Equilibrada=ouro, Técnica=violeta
+- Diagnóstico em card com borda ciana — estilo parecer consultivo
+- Nível de linguagem: pills custom via `session_state` + CSS `st-key-*`; cores Simples=verde, Equilibrada=ouro `#C9912A`, Técnica=violeta (independentes do acento estrutural)
 - Tema Streamlit configurado via `.streamlit/config.toml`
 - Gráfico de barras removido em favor dos cards
 
@@ -62,12 +63,10 @@ _Última actualização: 9 de junho de 2026_
 - Benchmarks: SABI (928 463 empresas, junho 2026) — população completa, não amostra
 - Percentil: interpolação linear P25/P50/P75 — sem IA, só math
 - Resultados: HTML custom com CSS inline — não depende de widgets Streamlit para os cards
-- Design system: navy/ouro/semântico — filosofia "o design serve a comparação"
+- Design system: navy/ciano/semântico — filosofia "o design serve a comparação"
+- Pills: `nivel_pills_selector()` usa `st.button` + CSS `.st-key-{key}` para styling robusto (sem depender de internos React do Streamlit)
 
 ## Próximos passos
-
-### Imediato (antes de sexta 13/jun)
-- [ ] Resolver cor das pills por opção quando selecionadas (CSS vs. emotion do Streamlit)
 
 ### A seguir
 - [ ] Restantes categorias de análise (rendibilidade, endividamento)
