@@ -62,7 +62,7 @@ NIVEIS_LINGUAGEM = {
 
 NAVY     = "#0A2540"
 AZUL     = "#1D6FA4"
-OURO     = "#400a0a"
+OURO     = "#41c3e0"
 BG       = "#0A2540"
 VERDE    = "#1A7A4A"
 AMBAR    = "#B45309"
@@ -107,7 +107,7 @@ html, body, .stApp {{
 /* Divider */
 hr {{
     border: none !important;
-    border-top: 1px solid rgba(64,10,10,0.6) !important;
+    border-top: 1px solid rgba(65,195,224,0.6) !important;
     margin: 1.8rem 0 !important;
 }}
 
@@ -123,12 +123,12 @@ hr {{
     font-weight: 700 !important;
     font-size: 0.92rem !important;
     letter-spacing: 0.02em !important;
-    box-shadow: 0 2px 12px rgba(64,10,10,0.35) !important;
+    box-shadow: 0 2px 12px rgba(65,195,224,0.35) !important;
     transition: all 0.18s !important;
 }}
 .stButton > button:hover {{
     background-color: #B8811F !important;
-    box-shadow: 0 4px 18px rgba(64,10,10,0.45) !important;
+    box-shadow: 0 4px 18px rgba(65,195,224,0.45) !important;
     transform: translateY(-1px);
 }}
 .stButton > button:active {{
@@ -144,7 +144,7 @@ hr {{
 }}
 .stNumberInput > div > div > input:focus {{
     border-color: {OURO} !important;
-    box-shadow: 0 0 0 2px rgba(64,10,10,0.2) !important;
+    box-shadow: 0 0 0 2px rgba(65,195,224,0.2) !important;
     outline: none !important;
 }}
 
@@ -158,7 +158,7 @@ hr {{
 /* File uploader */
 [data-testid="stFileUploaderDropzone"] {{
     border-radius: 10px !important;
-    border: 1.5px dashed rgba(64,10,10,0.45) !important;
+    border: 1.5px dashed rgba(65,195,224,0.45) !important;
     background: rgba(255,255,255,0.04) !important;
 }}
 
@@ -401,7 +401,7 @@ st.markdown(CSS, unsafe_allow_html=True)
 
 # Cabeçalho
 st.markdown(f"""
-<div style="padding:1.5rem 0 1.2rem;border-bottom:1px solid rgba(64,10,10,0.4);margin-bottom:0.5rem;">
+<div style="padding:1.5rem 0 1.2rem;border-bottom:1px solid rgba(65,195,224,0.4);margin-bottom:0.5rem;">
     <div style="font-size:1.9rem;font-weight:800;color:white;
                 letter-spacing:-0.03em;line-height:1;">
         ALTER
