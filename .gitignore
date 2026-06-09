@@ -18,3 +18,7 @@ __pycache__/
 # Ficheiros temporários de teste (PDFs, etc.) que não devem ir para o repositório
 # Comenta esta linha se quiseres versionar o PDF de teste
 *.pdf
+
+# Exports SABI (dados proprietários Bureau van Dijk — não versionar)
+SABI_Export_*.xlsx
+*.xlsx

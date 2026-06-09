@@ -18,10 +18,10 @@ import liquidez
 import solvabilidade
 import extracao
 from benchmarks import FONTE
+from config import MODELO_DIAGNOSTICO
 
 load_dotenv()
 cliente = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-MODELO_DIAGNOSTICO = "claude-sonnet-4-6"
 
 SETORES = [
     "Comércio a retalho",
@@ -61,26 +61,39 @@ NIVEIS_LINGUAGEM = {
 # ---------------------------------------------------------------------------
 
 NAVY     = "#0A2540"
-AZUL     = "#1D6FA4"
-OURO     = "#41c3e0"
-BG       = "#0A2540"
-VERDE    = "#1A7A4A"
-AMBAR    = "#B45309"
-VERMELHO = "#B91C1C"
+CIANO    = "#41c3e0"   # acento estrutural (luminoso sobre fundo escuro)
+TXT      = "#EAF2F8"   # texto primário sobre vidro escuro
+TXT_DIM  = "#9FB3C8"   # texto secundário
+TXT_MUTE = "#6B7E92"   # texto terciário / notas
+VERDE    = "#34D399"   # confortável  (brilhante p/ fundo escuro)
+AMBAR    = "#FBBF24"   # dentro da norma
+VERMELHO = "#F87171"   # abaixo da norma
+
+# Receita de vidro reutilizada nos cards
+_GLASS = (
+    "background:linear-gradient(160deg,rgba(255,255,255,0.07),rgba(255,255,255,0.028));"
+    "border:1px solid rgba(255,255,255,0.10);"
+    "backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);"
+    "box-shadow:0 12px 38px rgba(3,12,24,0.50),inset 0 1px 0 rgba(255,255,255,0.08);"
+)
 
 CSS = f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 html, body, .stApp {{
-    background-color: {BG} !important;
+    background:
+        radial-gradient(1200px 620px at 50% -12%, rgba(65,195,224,0.16), transparent 60%),
+        radial-gradient(900px 500px at 100% 4%, rgba(65,195,224,0.07), transparent 55%),
+        linear-gradient(180deg, #0C2C4B 0%, #08203A 42%, #061528 100%) !important;
+    background-attachment: fixed !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
 }}
 
 .block-container {{
     padding-top: 1.5rem !important;
     padding-bottom: 3rem !important;
-    max-width: 900px !important;
+    max-width: 880px !important;
 }}
 
 #MainMenu, footer, header {{ visibility: hidden; }}
@@ -107,28 +120,29 @@ html, body, .stApp {{
 /* Divider */
 hr {{
     border: none !important;
-    border-top: 1px solid rgba(65,195,224,0.6) !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, rgba(65,195,224,0.55), transparent) !important;
     margin: 1.8rem 0 !important;
 }}
 
-/* Pills: estilo gerido por nivel_pills_selector() via session_state + CSS :has() */
+/* Pills: estilo gerido por nivel_pills_selector() via session_state + CSS .st-key-* */
 
-/* Botões — ouro sobre navy */
+/* Botões — gradiente ciano luminoso */
 .stButton > button {{
-    background-color: {OURO} !important;
-    color: white !important;
+    background: linear-gradient(135deg, #4FCDEA 0%, #2BA3C6 100%) !important;
+    color: #07263C !important;
     border: none !important;
-    border-radius: 8px !important;
-    padding: 0.55rem 2rem !important;
+    border-radius: 10px !important;
+    padding: 0.6rem 2rem !important;
     font-weight: 700 !important;
     font-size: 0.92rem !important;
     letter-spacing: 0.02em !important;
-    box-shadow: 0 2px 12px rgba(65,195,224,0.35) !important;
-    transition: all 0.18s !important;
+    box-shadow: 0 6px 22px rgba(65,195,224,0.40), inset 0 1px 0 rgba(255,255,255,0.35) !important;
+    transition: all 0.18s ease !important;
 }}
 .stButton > button:hover {{
-    background-color: #6dd9f0 !important;
-    box-shadow: 0 4px 18px rgba(65,195,224,0.45) !important;
+    background: linear-gradient(135deg, #6FE0F5 0%, #3FB8DA 100%) !important;
+    box-shadow: 0 10px 34px rgba(65,195,224,0.58), inset 0 1px 0 rgba(255,255,255,0.45) !important;
     transform: translateY(-1px);
 }}
 .stButton > button:active {{
@@ -137,29 +151,38 @@ hr {{
 
 /* Inputs numéricos */
 .stNumberInput > div > div > input {{
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     border: 1px solid rgba(255,255,255,0.12) !important;
-    background: rgba(255,255,255,0.06) !important;
-    color: white !important;
+    background: rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(8px) !important;
+    color: {TXT} !important;
+    transition: all 0.16s ease !important;
 }}
 .stNumberInput > div > div > input:focus {{
-    border-color: {OURO} !important;
-    box-shadow: 0 0 0 2px rgba(65,195,224,0.2) !important;
+    border-color: {CIANO} !important;
+    box-shadow: 0 0 0 3px rgba(65,195,224,0.22) !important;
     outline: none !important;
 }}
 
 /* Selectbox */
 .stSelectbox > div > div {{
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     border: 1px solid rgba(255,255,255,0.12) !important;
-    background: rgba(255,255,255,0.06) !important;
+    background: rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(8px) !important;
 }}
 
 /* File uploader */
 [data-testid="stFileUploaderDropzone"] {{
-    border-radius: 10px !important;
-    border: 1.5px dashed rgba(65,195,224,0.45) !important;
-    background: rgba(255,255,255,0.04) !important;
+    border-radius: 14px !important;
+    border: 1.5px dashed rgba(65,195,224,0.40) !important;
+    background: rgba(255,255,255,0.035) !important;
+    backdrop-filter: blur(8px) !important;
+    transition: all 0.18s ease !important;
+}}
+[data-testid="stFileUploaderDropzone"]:hover {{
+    border-color: rgba(65,195,224,0.75) !important;
+    background: rgba(65,195,224,0.06) !important;
 }}
 
 /* Expander */
@@ -189,8 +212,11 @@ hr {{
 
 def step_header(titulo: str) -> str:
     return f"""
-    <div style="border-left:3px solid {OURO};padding-left:14px;margin:2rem 0 1.2rem;">
-        <div style="font-size:1.05rem;font-weight:700;color:white;
+    <div style="display:flex;align-items:center;gap:13px;margin:2.2rem 0 1.2rem;">
+        <div style="width:4px;height:22px;border-radius:4px;
+                    background:linear-gradient(180deg,{CIANO},rgba(65,195,224,0.25));
+                    box-shadow:0 0 14px rgba(65,195,224,0.65);"></div>
+        <div style="font-size:1.08rem;font-weight:700;color:{TXT};
                     letter-spacing:-0.01em;">{titulo}</div>
     </div>
     """
@@ -201,7 +227,7 @@ def _cor_avaliacao(avaliacao: str) -> str:
         "confortável":    VERDE,
         "dentro da norma": AMBAR,
         "abaixo da norma": VERMELHO,
-    }.get(avaliacao, NAVY)
+    }.get(avaliacao, CIANO)
 
 
 def _label_avaliacao(avaliacao: str) -> str:
@@ -215,35 +241,48 @@ def _label_avaliacao(avaliacao: str) -> str:
 def card_racio(r: dict) -> str:
     cor   = _cor_avaliacao(r["avaliacao"])
     label = _label_avaliacao(r["avaliacao"])
-    pct   = r["percentil"]
+    pct   = r["percentil"]          # melhor que pct% das empresas do setor
+    top   = max(1, 100 - pct)       # posição relativa: "top X%"
+    nota  = (
+        f'<div style="font-size:0.64rem;color:{TXT_MUTE};margin-top:10px;'
+        'font-style:italic;">Sem dados SABI para este setor — referência geral.</div>'
+        if r.get("ref_geral") else ""
+    )
     return f"""
-    <div style="background:#E3E8EF;border-radius:12px;padding:22px 24px 18px;
-                border-top:4px solid {cor};
-                box-shadow:0 1px 3px rgba(10,37,64,0.06),0 2px 8px rgba(10,37,64,0.04);">
-        <div style="font-size:0.70rem;color:#8A96A8;font-weight:700;
-                    letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">
+    <div style="position:relative;overflow:hidden;border-radius:18px;
+                padding:22px 24px 20px;{_GLASS}">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;
+                    background:linear-gradient(90deg,{cor},transparent 75%);
+                    box-shadow:0 0 14px {cor}99;"></div>
+        <div style="font-size:0.68rem;color:{TXT_DIM};font-weight:700;
+                    letter-spacing:0.10em;text-transform:uppercase;margin-bottom:10px;">
             {r['racio']}
         </div>
-        <div style="font-size:2.4rem;font-weight:800;color:{NAVY};
-                    line-height:1;letter-spacing:-0.02em;margin-bottom:6px;">
+        <div style="font-size:2.7rem;font-weight:800;color:{TXT};
+                    line-height:1;letter-spacing:-0.02em;margin-bottom:6px;
+                    text-shadow:0 0 26px rgba(65,195,224,0.30);">
             {r['valor']}
         </div>
-        <div style="font-size:0.72rem;color:#A0AEC0;margin-bottom:12px;font-style:italic;">
+        <div style="font-size:0.70rem;color:{TXT_MUTE};margin-bottom:14px;font-style:italic;">
             {r['formula']}
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="background:{cor}18;color:{cor};border:1px solid {cor}40;
-                         padding:3px 10px;border-radius:20px;font-size:0.73rem;
-                         font-weight:700;letter-spacing:0.03em;">
+            <span style="background:{cor}22;color:{cor};border:1px solid {cor}55;
+                         padding:4px 11px;border-radius:20px;font-size:0.70rem;
+                         font-weight:700;letter-spacing:0.04em;">
                 {label.upper()}
             </span>
-            <span style="font-size:0.88rem;color:#8A96A8;">
-                top <strong style="color:{NAVY};font-size:1.1rem;">{pct}%</strong>
+            <span style="font-size:0.84rem;color:{TXT_DIM};">
+                top <strong style="color:{TXT};font-size:1.18rem;">{top}%</strong>
             </span>
         </div>
-        <div style="background:#EEF2F7;border-radius:4px;height:3px;margin-top:10px;">
-            <div style="width:{pct}%;background:{cor};height:3px;border-radius:4px;"></div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:6px;
+                    height:6px;margin-top:13px;overflow:hidden;">
+            <div style="width:{pct}%;height:6px;border-radius:6px;
+                        background:linear-gradient(90deg,{cor},{cor}AA);
+                        box-shadow:0 0 12px {cor}99;"></div>
         </div>
+        {nota}
     </div>
     """
 
@@ -251,8 +290,8 @@ def card_racio(r: dict) -> str:
 def cards_grid(racios: list) -> str:
     cards = "".join(card_racio(r) for r in racios)
     return f"""
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);
-                gap:14px;margin-bottom:2rem;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+                gap:16px;margin-bottom:2rem;">
         {cards}
     </div>
     """
@@ -267,16 +306,16 @@ def _md_to_html(texto: str) -> str:
         if not s:
             continue
         if s.startswith("### "):
-            s = f'<h4 style="margin:1.1em 0 0.3em;color:{NAVY};font-size:1.18rem;font-weight:700;">{s[4:]}</h4>'
+            s = f'<h4 style="margin:1.1em 0 0.3em;color:{CIANO};font-size:1.18rem;font-weight:700;">{s[4:]}</h4>'
         elif s.startswith("## "):
-            s = f'<h3 style="margin:1.2em 0 0.4em;color:{NAVY};font-size:1.32rem;font-weight:700;">{s[3:]}</h3>'
+            s = f'<h3 style="margin:1.2em 0 0.4em;color:{TXT};font-size:1.32rem;font-weight:700;">{s[3:]}</h3>'
         elif s.startswith("# "):
-            s = f'<h2 style="margin:0 0 0.5em;color:{NAVY};font-size:1.55rem;font-weight:800;">{s[2:]}</h2>'
+            s = f'<h2 style="margin:0 0 0.5em;color:{TXT};font-size:1.55rem;font-weight:800;letter-spacing:-0.01em;">{s[2:]}</h2>'
         elif s == "---":
-            s = f'<hr style="border:none;border-top:1px solid #D1D9E6;margin:0.8em 0;">'
+            s = f'<hr style="border:none;border-top:1px solid rgba(255,255,255,0.12);margin:0.9em 0;">'
         else:
-            s = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', s)
-            s = f'<p style="margin:0 0 0.85em 0;color:{NAVY};font-size:1.15rem;line-height:1.78;">{s}</p>'
+            s = re.sub(r'\*\*(.+?)\*\*', rf'<strong style="color:{TXT};font-weight:700;">\1</strong>', s)
+            s = f'<p style="margin:0 0 0.85em 0;color:#C7D5E2;font-size:1.15rem;line-height:1.78;">{s}</p>'
         html_parts.append(s)
     return "".join(html_parts)
 
@@ -284,12 +323,18 @@ def _md_to_html(texto: str) -> str:
 def diagnostico_card(texto: str) -> str:
     conteudo = _md_to_html(texto)
     return f"""
-    <div style="background:#E3E8EF;border-radius:12px;padding:28px 32px;
-                border-left:4px solid {OURO};
-                box-shadow:0 1px 3px rgba(10,37,64,0.06),0 2px 8px rgba(10,37,64,0.04);">
-        <div style="font-size:0.70rem;color:#8A96A8;font-weight:700;
-                    letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;">
-            Diagnóstico &nbsp;·&nbsp; IA
+    <div style="position:relative;overflow:hidden;border-radius:20px;
+                padding:30px 34px;{_GLASS}">
+        <div style="position:absolute;top:0;left:0;bottom:0;width:3px;
+                    background:linear-gradient(180deg,{CIANO},transparent 80%);
+                    box-shadow:0 0 16px {CIANO}99;"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;
+                         background:{CIANO};box-shadow:0 0 10px {CIANO};"></span>
+            <span style="font-size:0.68rem;color:{CIANO};font-weight:700;
+                         letter-spacing:0.12em;text-transform:uppercase;">
+                Diagnóstico &nbsp;·&nbsp; IA
+            </span>
         </div>
         <div style="font-size:1.15rem;">{conteudo}</div>
     </div>
@@ -308,8 +353,8 @@ def _num_input(label: str, value: float) -> float:
 
 def fonte_caption() -> str:
     return f"""
-    <div style="margin-top:1.8rem;padding-top:1rem;border-top:1px solid #E2E8F0;
-                font-size:0.70rem;color:#B0BAC8;line-height:1.6;">
+    <div style="margin-top:1.8rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.10);
+                font-size:0.70rem;color:{TXT_MUTE};line-height:1.6;">
         Dados comparativos: {FONTE['nome']} &nbsp;&middot;&nbsp;
         Dados de {FONTE['ano_dados']} &nbsp;&middot;&nbsp;
         Consultado em {FONTE['data_consulta']} &nbsp;&middot;&nbsp;
@@ -431,12 +476,18 @@ st.markdown(CSS, unsafe_allow_html=True)
 
 # Cabeçalho
 st.markdown(f"""
-<div style="padding:1.5rem 0 1.2rem;border-bottom:1px solid rgba(65,195,224,0.4);margin-bottom:0.5rem;">
-    <div style="font-size:1.9rem;font-weight:800;color:white;
-                letter-spacing:-0.03em;line-height:1;">
-        ALTER
+<div style="padding:1.8rem 0 1.4rem;border-bottom:1px solid rgba(65,195,224,0.22);margin-bottom:0.5rem;">
+    <div style="display:flex;align-items:center;gap:13px;">
+        <div style="font-size:2.3rem;font-weight:800;letter-spacing:-0.035em;line-height:1;
+                    background:linear-gradient(110deg,#FFFFFF 10%,{CIANO} 90%);
+                    -webkit-background-clip:text;background-clip:text;
+                    -webkit-text-fill-color:transparent;color:transparent;">
+            ALTER
+        </div>
+        <div style="color:{CIANO};font-size:1.35rem;line-height:1;
+                    filter:drop-shadow(0 0 9px {CIANO});">◆</div>
     </div>
-    <div style="font-size:0.88rem;color:#6B7A8D;margin-top:0.4rem;letter-spacing:0.01em;">
+    <div style="font-size:0.9rem;color:{TXT_DIM};margin-top:0.5rem;letter-spacing:0.01em;">
         Análise financeira inteligente — uma segunda opinião, sempre disponível.
     </div>
 </div>
@@ -446,6 +497,8 @@ if "dados_extraidos" not in st.session_state:
     st.session_state.dados_extraidos = None
 if "texto_pdf" not in st.session_state:
     st.session_state.texto_pdf = None
+if "resultados" not in st.session_state:
+    st.session_state.resultados = None
 
 # --- Passo 1: contexto ---
 st.markdown(step_header("Contexto da empresa"), unsafe_allow_html=True)
@@ -495,6 +548,7 @@ if ficheiro is not None:
                 dados, texto = extracao.extrair_dados(ficheiro)
                 st.session_state.dados_extraidos = dados
                 st.session_state.texto_pdf = texto
+                st.session_state.resultados = None  # invalida análise anterior
             except Exception as e:
                 st.error(f"Erro na extração: {e}")
 
@@ -568,15 +622,24 @@ if st.session_state.dados_extraidos is not None:
             )
             todos_racios = racios_liq + racios_solv
 
-            st.divider()
-            st.markdown(step_header("Resultados"), unsafe_allow_html=True)
-            st.markdown(cards_grid(todos_racios), unsafe_allow_html=True)
-
             with st.spinner("A gerar o diagnóstico..."):
                 texto_diag = gerar_diagnostico(
                     todos_racios,
                     "Liquidez e Solvabilidade",
                     setor, dimensao, nivel_linguagem,
                 )
-            st.markdown(diagnostico_card(texto_diag), unsafe_allow_html=True)
-            st.markdown(fonte_caption(), unsafe_allow_html=True)
+
+            # Guarda em session_state para os resultados sobreviverem a reruns
+            st.session_state.resultados = {
+                "racios": todos_racios,
+                "diagnostico": texto_diag,
+            }
+
+# --- Resultados (renderizados fora do bloco do botão para persistirem) ---
+if st.session_state.get("resultados"):
+    res = st.session_state.resultados
+    st.divider()
+    st.markdown(step_header("Resultados"), unsafe_allow_html=True)
+    st.markdown(cards_grid(res["racios"]), unsafe_allow_html=True)
+    st.markdown(diagnostico_card(res["diagnostico"]), unsafe_allow_html=True)
+    st.markdown(fonte_caption(), unsafe_allow_html=True)

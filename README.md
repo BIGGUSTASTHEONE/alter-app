@@ -28,4 +28,11 @@ Projeto de Mestrado em Finanças e Contabilidade, Universidade da Beira Interior
 
 ## Estado atual
 
-Protótipo da categoria de liquidez (Liquidez Geral, Liquidez Reduzida, Liquidez Imediata).
+Categoria de **Liquidez e Solvabilidade** completa:
+
+- **Liquidez** — Geral, Reduzida e Imediata
+- **Solvabilidade** — Capital Próprio / Passivo Total
+- Posicionamento sectorial face a benchmarks P25/P50/P75 reais (SABI — 928 463 empresas portuguesas, 40 combinações setor×dimensão)
+- Diagnóstico em linguagem natural, com nível ajustável (Simples / Equilibrada / Técnica)
+
+Próximas categorias previstas: rendibilidade e endividamento. Ver [STATUS.md](STATUS.md) para o detalhe.

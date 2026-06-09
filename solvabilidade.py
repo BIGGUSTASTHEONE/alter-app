@@ -48,4 +48,5 @@ def analisar_solvabilidade(dados, setor, dimensao):
         "valor":     round(racio, 2),
         "avaliacao": avaliacao,
         "percentil": percentil,
+        "ref_geral": not benchmarks.e_sectorial(setor, dimensao, "solvabilidade"),
     }]

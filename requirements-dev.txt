@@ -1,0 +1,6 @@
+# Dependências apenas para o pipeline offline de geração de benchmarks
+# (importar_sabi.py). Não são necessárias para correr a aplicação.
+#   pip install -r requirements-dev.txt
+pandas==3.0.3
+openpyxl==3.1.5
+pytest==8.3.4

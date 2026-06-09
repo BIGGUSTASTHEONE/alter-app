@@ -113,6 +113,7 @@ def analisar_liquidez(dados, setor, dimensao):
             "valor": round(geral, 2),
             "avaliacao": av_geral,
             "percentil": pct_geral,
+            "ref_geral": not benchmarks.e_sectorial(setor, dimensao, "liquidez_geral"),
         },
         {
             "racio": "Liquidez Reduzida",
@@ -120,6 +121,7 @@ def analisar_liquidez(dados, setor, dimensao):
             "valor": round(reduzida, 2),
             "avaliacao": av_reduzida,
             "percentil": pct_reduzida,
+            "ref_geral": not benchmarks.e_sectorial(setor, dimensao, "liquidez_reduzida"),
         },
         {
             "racio": "Liquidez Imediata",
@@ -127,5 +129,6 @@ def analisar_liquidez(dados, setor, dimensao):
             "valor": round(imediata, 2),
             "avaliacao": av_imediata,
             "percentil": pct_imediata,
+            "ref_geral": not benchmarks.e_sectorial(setor, dimensao, "liquidez_imediata"),
         },
     ]

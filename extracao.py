@@ -16,9 +16,10 @@ import fitz  # PyMuPDF
 from anthropic import Anthropic
 from dotenv import load_dotenv
 
+from config import MODELO_EXTRACAO as MODELO
+
 load_dotenv()
 cliente = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-MODELO = "claude-sonnet-4-6"
 
 _INSTRUCAO_CAMPOS = (
     "És um extrator de dados financeiros. "

@@ -1,6 +1,14 @@
 # Estado do Projecto — Alter
 
-_Última actualização: 9 de junho de 2026 (rev. noite)_
+_Última actualização: 9 de junho de 2026 (rev. revisão Opus)_
+
+## Mudanças desta revisão (correções e robustez)
+- **Bug corrigido — label "top X%"**: o card mostrava o percentil em vez da posição relativa. Agora mostra `top (100−percentil)%` (melhor que X% → top (100−X)%).
+- **Bug corrigido — pipeline SABI**: `classificar_dimensao` recebia vendas/activo trocados; só afetava a fronteira Média↔Grande. Benchmarks regenerados sobre as 928 463 empresas (20 entradas Grande+Média atualizadas; Micro/Pequena inalteradas, como esperado).
+- **Resultados persistentes**: cards e diagnóstico passaram para `session_state` — já não desaparecem ao mexer noutro widget (e poupam chamadas à API).
+- **Liquidez Imediata / Agricultura**: cards marcados com "referência geral" quando não há dado SABI sectorial (`benchmarks.e_sectorial`).
+- **Testes**: `tests/test_nucleo.py` — 27 testes do núcleo determinístico (rácios, percentis, avaliação, dimensão, CAE).
+- **Infra**: modelos centralizados em `config.py`; `requirements.txt` fixado e separado de `requirements-dev.txt` (pandas/openpyxl/pytest); exports SABI no `.gitignore`.
 
 ## O que está feito
 

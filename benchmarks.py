@@ -42,9 +42,9 @@ BENCHMARK_GERAL = {
 
 BENCHMARKS = {
     ("Comércio a retalho", "Grande"): {
-        "liquidez_geral": {"p25": 0.802, "p50": 1.082, "p75": 1.422},
-        "liquidez_reduzida": {"p25": 0.397, "p50": 0.585, "p75": 0.853},
-        "solvabilidade": {"p25": 0.1857, "p50": 0.3177, "p75": 0.4485},
+        "liquidez_geral": {"p25": 0.8412, "p50": 1.1235, "p75": 1.4613},
+        "liquidez_reduzida": {"p25": 0.3922, "p50": 0.5905, "p75": 0.8745},
+        "solvabilidade": {"p25": 0.1974, "p50": 0.3245, "p75": 0.4665},
     },
     ("Comércio a retalho", "Micro"): {
         "liquidez_geral": {"p25": 0.629, "p50": 1.416, "p75": 3.603},
@@ -52,9 +52,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2017, "p50": 0.4416, "p75": 0.7287},
     },
     ("Comércio a retalho", "Média"): {
-        "liquidez_geral": {"p25": 1.016, "p50": 1.34, "p75": 1.941},
-        "liquidez_reduzida": {"p25": 0.472, "p50": 0.748, "p75": 1.235},
-        "solvabilidade": {"p25": 0.242, "p50": 0.3904, "p75": 0.5824},
+        "liquidez_geral": {"p25": 1.0112, "p50": 1.329, "p75": 1.9245},
+        "liquidez_reduzida": {"p25": 0.473, "p50": 0.741, "p75": 1.2188},
+        "solvabilidade": {"p25": 0.2374, "p50": 0.3865, "p75": 0.5779},
     },
     ("Comércio a retalho", "Pequena"): {
         "liquidez_geral": {"p25": 1.102, "p50": 1.736, "p75": 3.1},
@@ -62,9 +62,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2811, "p50": 0.4972, "p75": 0.7099},
     },
     ("Comércio por grosso", "Grande"): {
-        "liquidez_geral": {"p25": 1.0933, "p50": 1.3275, "p75": 1.7668},
-        "liquidez_reduzida": {"p25": 0.7512, "p50": 1.0425, "p75": 1.389},
-        "solvabilidade": {"p25": 0.1819, "p50": 0.3496, "p75": 0.5831},
+        "liquidez_geral": {"p25": 1.078, "p50": 1.347, "p75": 1.913},
+        "liquidez_reduzida": {"p25": 0.747, "p50": 1.045, "p75": 1.393},
+        "solvabilidade": {"p25": 0.1818, "p50": 0.3661, "p75": 0.5867},
     },
     ("Comércio por grosso", "Micro"): {
         "liquidez_geral": {"p25": 0.845, "p50": 1.579, "p75": 3.886},
@@ -72,9 +72,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2085, "p50": 0.4535, "p75": 0.7455},
     },
     ("Comércio por grosso", "Média"): {
-        "liquidez_geral": {"p25": 1.174, "p50": 1.658, "p75": 2.557},
-        "liquidez_reduzida": {"p25": 0.816, "p50": 1.185, "p75": 1.889},
-        "solvabilidade": {"p25": 0.2697, "p50": 0.4417, "p75": 0.6467},
+        "liquidez_geral": {"p25": 1.1755, "p50": 1.65, "p75": 2.573},
+        "liquidez_reduzida": {"p25": 0.8115, "p50": 1.185, "p75": 1.899},
+        "solvabilidade": {"p25": 0.2701, "p50": 0.4399, "p75": 0.6481},
     },
     ("Comércio por grosso", "Pequena"): {
         "liquidez_geral": {"p25": 1.2258, "p50": 1.8, "p75": 3.0682},
@@ -82,9 +82,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2613, "p50": 0.4603, "p75": 0.6795},
     },
     ("Construção e imobiliário", "Grande"): {
-        "liquidez_geral": {"p25": 1.1445, "p50": 1.3075, "p75": 1.665},
-        "liquidez_reduzida": {"p25": 1.0817, "p50": 1.2505, "p75": 1.528},
-        "solvabilidade": {"p25": 0.2467, "p50": 0.3733, "p75": 0.5116},
+        "liquidez_geral": {"p25": 1.137, "p50": 1.3, "p75": 1.665},
+        "liquidez_reduzida": {"p25": 1.08, "p50": 1.256, "p75": 1.576},
+        "solvabilidade": {"p25": 0.2433, "p50": 0.3789, "p75": 0.5094},
     },
     ("Construção e imobiliário", "Micro"): {
         "liquidez_geral": {"p25": 0.954, "p50": 1.754, "p75": 4.2993},
@@ -92,9 +92,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2057, "p50": 0.4354, "p75": 0.7085},
     },
     ("Construção e imobiliário", "Média"): {
-        "liquidez_geral": {"p25": 1.1827, "p50": 1.537, "p75": 2.154},
-        "liquidez_reduzida": {"p25": 1.0408, "p50": 1.3455, "p75": 1.8542},
-        "solvabilidade": {"p25": 0.2478, "p50": 0.404, "p75": 0.5803},
+        "liquidez_geral": {"p25": 1.185, "p50": 1.534, "p75": 2.169},
+        "liquidez_reduzida": {"p25": 1.041, "p50": 1.345, "p75": 1.854},
+        "solvabilidade": {"p25": 0.2485, "p50": 0.404, "p75": 0.5803},
     },
     ("Construção e imobiliário", "Pequena"): {
         "liquidez_geral": {"p25": 1.2183, "p50": 1.728, "p75": 2.8495},
@@ -102,9 +102,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2137, "p50": 0.4025, "p75": 0.6075},
     },
     ("Indústria transformadora", "Grande"): {
-        "liquidez_geral": {"p25": 1.0205, "p50": 1.355, "p75": 2.103},
-        "liquidez_reduzida": {"p25": 0.6005, "p50": 0.927, "p75": 1.449},
-        "solvabilidade": {"p25": 0.3249, "p50": 0.4782, "p75": 0.6453},
+        "liquidez_geral": {"p25": 1.031, "p50": 1.355, "p75": 2.073},
+        "liquidez_reduzida": {"p25": 0.597, "p50": 0.93, "p75": 1.431},
+        "solvabilidade": {"p25": 0.3248, "p50": 0.4778, "p75": 0.6324},
     },
     ("Indústria transformadora", "Micro"): {
         "liquidez_geral": {"p25": 0.69, "p50": 1.4825, "p75": 3.668},
@@ -112,9 +112,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2249, "p50": 0.4571, "p75": 0.7337},
     },
     ("Indústria transformadora", "Média"): {
-        "liquidez_geral": {"p25": 1.07, "p50": 1.554, "p75": 2.5575},
-        "liquidez_reduzida": {"p25": 0.642, "p50": 1.082, "p75": 1.8405},
-        "solvabilidade": {"p25": 0.3163, "p50": 0.4853, "p75": 0.6773},
+        "liquidez_geral": {"p25": 1.069, "p50": 1.5545, "p75": 2.5652},
+        "liquidez_reduzida": {"p25": 0.642, "p50": 1.081, "p75": 1.846},
+        "solvabilidade": {"p25": 0.3163, "p50": 0.4854, "p75": 0.6791},
     },
     ("Indústria transformadora", "Pequena"): {
         "liquidez_geral": {"p25": 1.037, "p50": 1.592, "p75": 2.746},
@@ -122,9 +122,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2675, "p50": 0.4595, "p75": 0.6751},
     },
     ("Outro / Não especificado", "Grande"): {
-        "liquidez_geral": {"p25": 0.687, "p50": 1.123, "p75": 1.8325},
-        "liquidez_reduzida": {"p25": 0.589, "p50": 1.081, "p75": 1.7155},
-        "solvabilidade": {"p25": 0.2003, "p50": 0.3918, "p75": 0.5774},
+        "liquidez_geral": {"p25": 0.6875, "p50": 1.118, "p75": 1.8317},
+        "liquidez_reduzida": {"p25": 0.6, "p50": 1.0885, "p75": 1.729},
+        "solvabilidade": {"p25": 0.1967, "p50": 0.3885, "p75": 0.5744},
     },
     ("Outro / Não especificado", "Micro"): {
         "liquidez_geral": {"p25": 0.503, "p50": 1.472, "p75": 5.191},
@@ -132,9 +132,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2088, "p50": 0.4938, "p75": 0.8035},
     },
     ("Outro / Não especificado", "Média"): {
-        "liquidez_geral": {"p25": 0.823, "p50": 1.257, "p75": 2.0615},
-        "liquidez_reduzida": {"p25": 0.666, "p50": 1.128, "p75": 1.8005},
-        "solvabilidade": {"p25": 0.2187, "p50": 0.4165, "p75": 0.6337},
+        "liquidez_geral": {"p25": 0.823, "p50": 1.2465, "p75": 2.0543},
+        "liquidez_reduzida": {"p25": 0.6625, "p50": 1.13, "p75": 1.8017},
+        "solvabilidade": {"p25": 0.2212, "p50": 0.4196, "p75": 0.6343},
     },
     ("Outro / Não especificado", "Pequena"): {
         "liquidez_geral": {"p25": 0.9672, "p50": 1.5195, "p75": 2.9547},
@@ -142,9 +142,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2126, "p50": 0.44, "p75": 0.6851},
     },
     ("Restauração e hotelaria", "Grande"): {
-        "liquidez_geral": {"p25": 0.953, "p50": 1.297, "p75": 1.594},
-        "liquidez_reduzida": {"p25": 0.87, "p50": 1.254, "p75": 1.536},
-        "solvabilidade": {"p25": 0.2674, "p50": 0.3839, "p75": 0.5565},
+        "liquidez_geral": {"p25": 0.9702, "p50": 1.4215, "p75": 1.8853},
+        "liquidez_reduzida": {"p25": 0.9255, "p50": 1.266, "p75": 1.8153},
+        "solvabilidade": {"p25": 0.2727, "p50": 0.4029, "p75": 0.6281},
     },
     ("Restauração e hotelaria", "Micro"): {
         "liquidez_geral": {"p25": 0.241, "p50": 0.877, "p75": 2.64},
@@ -152,9 +152,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.1951, "p50": 0.4348, "p75": 0.7205},
     },
     ("Restauração e hotelaria", "Média"): {
-        "liquidez_geral": {"p25": 0.5637, "p50": 1.0325, "p75": 1.9172},
-        "liquidez_reduzida": {"p25": 0.5058, "p50": 0.935, "p75": 1.822},
-        "solvabilidade": {"p25": 0.2892, "p50": 0.47, "p75": 0.6475},
+        "liquidez_geral": {"p25": 0.563, "p50": 1.03, "p75": 1.887},
+        "liquidez_reduzida": {"p25": 0.505, "p50": 0.931, "p75": 1.809},
+        "solvabilidade": {"p25": 0.2871, "p50": 0.4644, "p75": 0.6343},
     },
     ("Restauração e hotelaria", "Pequena"): {
         "liquidez_geral": {"p25": 0.666, "p50": 1.239, "p75": 2.438},
@@ -162,9 +162,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2446, "p50": 0.4454, "p75": 0.6647},
     },
     ("Saúde e farmácia", "Grande"): {
-        "liquidez_geral": {"p25": 0.4605, "p50": 0.607, "p75": 0.923},
-        "liquidez_reduzida": {"p25": 0.3902, "p50": 0.5725, "p75": 0.8935},
-        "solvabilidade": {"p25": 0.143, "p50": 0.3009, "p75": 0.524},
+        "liquidez_geral": {"p25": 0.4762, "p50": 0.645, "p75": 0.947},
+        "liquidez_reduzida": {"p25": 0.409, "p50": 0.5975, "p75": 0.9235},
+        "solvabilidade": {"p25": 0.126, "p50": 0.2794, "p75": 0.5183},
     },
     ("Saúde e farmácia", "Micro"): {
         "liquidez_geral": {"p25": 0.974, "p50": 2.8, "p75": 9.059},
@@ -172,9 +172,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.4013, "p50": 0.6985, "p75": 0.8962},
     },
     ("Saúde e farmácia", "Média"): {
-        "liquidez_geral": {"p25": 0.6558, "p50": 1.1565, "p75": 2.0045},
-        "liquidez_reduzida": {"p25": 0.6208, "p50": 1.107, "p75": 1.9547},
-        "solvabilidade": {"p25": 0.3136, "p50": 0.6025, "p75": 0.8262},
+        "liquidez_geral": {"p25": 0.6438, "p50": 1.1565, "p75": 2.0143},
+        "liquidez_reduzida": {"p25": 0.6028, "p50": 1.107, "p75": 1.955},
+        "solvabilidade": {"p25": 0.3353, "p50": 0.6142, "p75": 0.8313},
     },
     ("Saúde e farmácia", "Pequena"): {
         "liquidez_geral": {"p25": 0.7572, "p50": 1.5, "p75": 3.1707},
@@ -182,9 +182,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.424, "p50": 0.6846, "p75": 0.8589},
     },
     ("Serviços profissionais", "Grande"): {
-        "liquidez_geral": {"p25": 0.954, "p50": 1.296, "p75": 1.642},
-        "liquidez_reduzida": {"p25": 0.881, "p50": 1.209, "p75": 1.642},
-        "solvabilidade": {"p25": 0.2457, "p50": 0.3597, "p75": 0.5159},
+        "liquidez_geral": {"p25": 0.942, "p50": 1.252, "p75": 1.5475},
+        "liquidez_reduzida": {"p25": 0.8655, "p50": 1.209, "p75": 1.5475},
+        "solvabilidade": {"p25": 0.2507, "p50": 0.3777, "p75": 0.5263},
     },
     ("Serviços profissionais", "Micro"): {
         "liquidez_geral": {"p25": 0.795, "p50": 1.858, "p75": 4.969},
@@ -192,9 +192,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2835, "p50": 0.559, "p75": 0.8092},
     },
     ("Serviços profissionais", "Média"): {
-        "liquidez_geral": {"p25": 1.0097, "p50": 1.35, "p75": 1.8935},
-        "liquidez_reduzida": {"p25": 0.922, "p50": 1.2845, "p75": 1.887},
-        "solvabilidade": {"p25": 0.2429, "p50": 0.3926, "p75": 0.5774},
+        "liquidez_geral": {"p25": 1.0145, "p50": 1.358, "p75": 1.9005},
+        "liquidez_reduzida": {"p25": 0.928, "p50": 1.2945, "p75": 1.889},
+        "solvabilidade": {"p25": 0.2426, "p50": 0.3848, "p75": 0.573},
     },
     ("Serviços profissionais", "Pequena"): {
         "liquidez_geral": {"p25": 1.055, "p50": 1.5745, "p75": 2.583},
@@ -202,9 +202,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2564, "p50": 0.4798, "p75": 0.6848},
     },
     ("Tecnologia e software", "Grande"): {
-        "liquidez_geral": {"p25": 1.1285, "p50": 1.552, "p75": 1.9085},
-        "liquidez_reduzida": {"p25": 1.125, "p50": 1.498, "p75": 1.8995},
-        "solvabilidade": {"p25": 0.2415, "p50": 0.4095, "p75": 0.4959},
+        "liquidez_geral": {"p25": 1.1277, "p50": 1.527, "p75": 1.8542},
+        "liquidez_reduzida": {"p25": 1.1255, "p50": 1.478, "p75": 1.8455},
+        "solvabilidade": {"p25": 0.2331, "p50": 0.4095, "p75": 0.4973},
     },
     ("Tecnologia e software", "Micro"): {
         "liquidez_geral": {"p25": 0.843, "p50": 1.835, "p75": 4.625},
@@ -212,9 +212,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2996, "p50": 0.5657, "p75": 0.8041},
     },
     ("Tecnologia e software", "Média"): {
-        "liquidez_geral": {"p25": 1.131, "p50": 1.469, "p75": 2.189},
-        "liquidez_reduzida": {"p25": 1.114, "p50": 1.469, "p75": 2.098},
-        "solvabilidade": {"p25": 0.2112, "p50": 0.4239, "p75": 0.6224},
+        "liquidez_geral": {"p25": 1.138, "p50": 1.4735, "p75": 2.1555},
+        "liquidez_reduzida": {"p25": 1.1162, "p50": 1.4735, "p75": 2.042},
+        "solvabilidade": {"p25": 0.2119, "p50": 0.4239, "p75": 0.6187},
     },
     ("Tecnologia e software", "Pequena"): {
         "liquidez_geral": {"p25": 1.09, "p50": 1.547, "p75": 2.462},
@@ -222,9 +222,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2445, "p50": 0.4309, "p75": 0.6328},
     },
     ("Transportes e logística", "Grande"): {
-        "liquidez_geral": {"p25": 0.658, "p50": 1.074, "p75": 1.611},
-        "liquidez_reduzida": {"p25": 0.649, "p50": 1.054, "p75": 1.566},
-        "solvabilidade": {"p25": 0.2064, "p50": 0.3579, "p75": 0.5371},
+        "liquidez_geral": {"p25": 0.7775, "p50": 1.077, "p75": 1.5825},
+        "liquidez_reduzida": {"p25": 0.7632, "p50": 1.064, "p75": 1.5262},
+        "solvabilidade": {"p25": 0.2207, "p50": 0.362, "p75": 0.5342},
     },
     ("Transportes e logística", "Micro"): {
         "liquidez_geral": {"p25": 0.475, "p50": 1.562, "p75": 5.868},
@@ -232,9 +232,9 @@ BENCHMARKS = {
         "solvabilidade": {"p25": 0.2557, "p50": 0.5431, "p75": 0.8374},
     },
     ("Transportes e logística", "Média"): {
-        "liquidez_geral": {"p25": 0.84, "p50": 1.163, "p75": 1.8405},
-        "liquidez_reduzida": {"p25": 0.809, "p50": 1.141, "p75": 1.8405},
-        "solvabilidade": {"p25": 0.181, "p50": 0.3531, "p75": 0.55},
+        "liquidez_geral": {"p25": 0.8237, "p50": 1.1545, "p75": 1.8653},
+        "liquidez_reduzida": {"p25": 0.7995, "p50": 1.1315, "p75": 1.8653},
+        "solvabilidade": {"p25": 0.181, "p50": 0.3496, "p75": 0.5503},
     },
     ("Transportes e logística", "Pequena"): {
         "liquidez_geral": {"p25": 0.9085, "p50": 1.264, "p75": 2.0265},
@@ -254,3 +254,11 @@ def obter(setor, dimensao):
     Faz merge com BENCHMARK_GERAL: chaves em falta no setor usam o valor geral.
     """
     return {**BENCHMARK_GERAL, **BENCHMARKS.get((setor, dimensao), {})}
+
+
+def e_sectorial(setor, dimensao, racio):
+    """
+    True se o benchmark deste rácio vem de dados SABI do setor+dimensão;
+    False se caiu no fallback geral (ex.: Liquidez Imediata, Agricultura).
+    """
+    return racio in BENCHMARKS.get((setor, dimensao), {})

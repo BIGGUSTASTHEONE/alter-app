@@ -155,7 +155,7 @@ def gerar_benchmarks(caminhos):
     # Classificação de setor e dimensão
     df["_setor"] = df[col_cae].apply(mapear_cae)
     df["_dimensao"] = df.apply(
-        lambda r: classificar_dimensao(r[col_emp], r[col_activo], r[col_vendas]),
+        lambda r: classificar_dimensao(r[col_emp], r[col_vendas], r[col_activo]),
         axis=1,
     )
     df = df.dropna(subset=["_dimensao"])
