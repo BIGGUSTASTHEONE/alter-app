@@ -60,12 +60,12 @@ NIVEIS_LINGUAGEM = {
 # SISTEMA DE DESIGN
 # ---------------------------------------------------------------------------
 
-NAVY    = "#0A2540"
-AZUL    = "#1D6FA4"
-OURO    = "#C9912A"
-BG      = "#F7F9FC"
-VERDE   = "#1A7A4A"
-AMBAR   = "#B45309"
+NAVY     = "#0A2540"
+AZUL     = "#1D6FA4"
+OURO     = "#C9912A"
+BG       = "#0A2540"
+VERDE    = "#1A7A4A"
+AMBAR    = "#B45309"
 VERMELHO = "#B91C1C"
 
 CSS = f"""
@@ -85,79 +85,95 @@ html, body, .stApp {{
 
 #MainMenu, footer, header {{ visibility: hidden; }}
 
-/* Botões */
-.stButton > button {{
-    background-color: {NAVY} !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.55rem 2rem !important;
-    font-weight: 600 !important;
-    font-size: 0.92rem !important;
-    letter-spacing: 0.02em !important;
-    box-shadow: 0 2px 8px rgba(10,37,64,0.18) !important;
-    transition: all 0.18s !important;
-}}
-.stButton > button:hover {{
-    background-color: {AZUL} !important;
-    box-shadow: 0 4px 14px rgba(29,111,164,0.28) !important;
-    transform: translateY(-1px);
-}}
-.stButton > button:active {{
-    transform: translateY(0px) !important;
-}}
-
-/* Labels */
+/* Labels dos inputs */
 .stSelectbox label,
 .stSlider label,
 .stNumberInput label,
-.stFileUploader label {{
-    color: {NAVY} !important;
+.stFileUploader label,
+.stFileUploader p,
+[data-testid="stFileUploaderDropzoneInstructions"] span {{
+    color: #8BAAC4 !important;
     font-weight: 600 !important;
     font-size: 0.80rem !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
 }}
 
-/* Inputs */
-.stNumberInput > div > div > input {{
-    border-radius: 8px !important;
-    border: 1px solid #CBD5E0 !important;
-    background: white !important;
-}}
-.stNumberInput > div > div > input:focus {{
-    border-color: {AZUL} !important;
-    box-shadow: 0 0 0 2px rgba(29,111,164,0.15) !important;
-}}
-
-/* Selectbox */
-.stSelectbox > div > div {{
-    border-radius: 8px !important;
-    border: 1px solid #CBD5E0 !important;
-    background: white !important;
+/* Caption e texto secundário */
+.stCaption, [data-testid="stCaptionContainer"] {{
+    color: #6B7A8D !important;
 }}
 
 /* Divider */
 hr {{
     border: none !important;
-    border-top: 1px solid #E2E8F0 !important;
+    border-top: 1px solid rgba(255,255,255,0.1) !important;
     margin: 1.8rem 0 !important;
 }}
 
+/* Botões — ouro sobre navy */
+.stButton > button {{
+    background-color: {OURO} !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.55rem 2rem !important;
+    font-weight: 700 !important;
+    font-size: 0.92rem !important;
+    letter-spacing: 0.02em !important;
+    box-shadow: 0 2px 12px rgba(201,145,42,0.35) !important;
+    transition: all 0.18s !important;
+}}
+.stButton > button:hover {{
+    background-color: #B8811F !important;
+    box-shadow: 0 4px 18px rgba(201,145,42,0.45) !important;
+    transform: translateY(-1px);
+}}
+.stButton > button:active {{
+    transform: translateY(0px) !important;
+}}
+
+/* Inputs numéricos */
+.stNumberInput > div > div > input {{
+    border-radius: 8px !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    background: rgba(255,255,255,0.06) !important;
+    color: white !important;
+}}
+.stNumberInput > div > div > input:focus {{
+    border-color: {OURO} !important;
+    box-shadow: 0 0 0 2px rgba(201,145,42,0.2) !important;
+    outline: none !important;
+}}
+
+/* Selectbox */
+.stSelectbox > div > div {{
+    border-radius: 8px !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    background: rgba(255,255,255,0.06) !important;
+}}
+
+/* File uploader */
+[data-testid="stFileUploaderDropzone"] {{
+    border-radius: 10px !important;
+    border: 1.5px dashed rgba(201,145,42,0.45) !important;
+    background: rgba(255,255,255,0.04) !important;
+}}
+
 /* Expander */
-.streamlit-expanderHeader {{
-    color: {AZUL} !important;
+.streamlit-expanderHeader,
+[data-testid="stExpander"] summary {{
+    color: #8BAAC4 !important;
     font-weight: 600 !important;
     font-size: 0.88rem !important;
 }}
 
-/* Caption */
-.stCaption {{
-    color: #8A96A8 !important;
-    font-size: 0.83rem !important;
+/* Spinner */
+[data-testid="stSpinner"] p {{
+    color: #8BAAC4 !important;
 }}
 
-/* Info / Error */
+/* Alerts */
 .stAlert {{
     border-radius: 10px !important;
 }}
@@ -169,13 +185,10 @@ hr {{
 # COMPONENTES HTML
 # ---------------------------------------------------------------------------
 
-def step_header(n: int, titulo: str) -> str:
+def step_header(titulo: str) -> str:
     return f"""
-    <div style="display:flex;align-items:center;gap:12px;margin:2rem 0 1.2rem;">
-        <div style="width:30px;height:30px;background:{NAVY};color:{OURO};
-                    border-radius:7px;display:flex;align-items:center;justify-content:center;
-                    font-weight:800;font-size:0.82rem;flex-shrink:0;">{n}</div>
-        <div style="font-size:1.05rem;font-weight:700;color:{NAVY};
+    <div style="border-left:3px solid {OURO};padding-left:14px;margin:2rem 0 1.2rem;">
+        <div style="font-size:1.05rem;font-weight:700;color:white;
                     letter-spacing:-0.01em;">{titulo}</div>
     </div>
     """
@@ -313,8 +326,8 @@ st.markdown(CSS, unsafe_allow_html=True)
 
 # Cabeçalho
 st.markdown(f"""
-<div style="padding:1.5rem 0 1.2rem;border-bottom:2px solid {OURO};margin-bottom:0.5rem;">
-    <div style="font-size:1.9rem;font-weight:800;color:{NAVY};
+<div style="padding:1.5rem 0 1.2rem;border-bottom:1px solid rgba(201,145,42,0.4);margin-bottom:0.5rem;">
+    <div style="font-size:1.9rem;font-weight:800;color:white;
                 letter-spacing:-0.03em;line-height:1;">
         ALTER
     </div>
@@ -330,7 +343,7 @@ if "texto_pdf" not in st.session_state:
     st.session_state.texto_pdf = None
 
 # --- Passo 1: contexto ---
-st.markdown(step_header(1, "Contexto da empresa"), unsafe_allow_html=True)
+st.markdown(step_header("Contexto da empresa"), unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 with col1:
     setor = st.selectbox(
@@ -375,7 +388,7 @@ with col3:
 st.divider()
 
 # --- Passo 2: upload ---
-st.markdown(step_header(2, "Carregar balanço (PDF)"), unsafe_allow_html=True)
+st.markdown(step_header("Carregar balanço (PDF)"), unsafe_allow_html=True)
 ficheiro = st.file_uploader(
     "Escolhe o PDF do balanço", type="pdf", label_visibility="collapsed"
 )
@@ -400,7 +413,7 @@ if ficheiro is not None:
 # --- Passo 3: confirmação ---
 if st.session_state.dados_extraidos is not None:
     st.divider()
-    st.markdown(step_header(3, "Confirmar os dados"), unsafe_allow_html=True)
+    st.markdown(step_header("Confirmar os dados"), unsafe_allow_html=True)
     st.caption(
         "Verifica os valores que a IA extraiu e corrige o que for preciso antes de avançar."
     )
@@ -409,7 +422,7 @@ if st.session_state.dados_extraidos is not None:
     col1, col2 = st.columns(2)
     with col1:
         st.markdown(
-            f"<div style='font-size:0.78rem;font-weight:700;color:{NAVY};"
+            f"<div style='font-size:0.78rem;font-weight:700;color:#8BAAC4;"
             f"letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.6rem;"
             f"margin-top:0.4rem;'>Ativo</div>",
             unsafe_allow_html=True,
@@ -419,7 +432,7 @@ if st.session_state.dados_extraidos is not None:
         caixa = st.number_input("Caixa e Depósitos", value=float(d.get("caixa_e_depositos") or 0.0))
     with col2:
         st.markdown(
-            f"<div style='font-size:0.78rem;font-weight:700;color:{NAVY};"
+            f"<div style='font-size:0.78rem;font-weight:700;color:#8BAAC4;"
             f"letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.6rem;"
             f"margin-top:0.4rem;'>Passivo e Capital</div>",
             unsafe_allow_html=True,
@@ -461,7 +474,7 @@ if st.session_state.dados_extraidos is not None:
             todos_racios = racios_liq + racios_solv
 
             st.divider()
-            st.markdown(step_header(4, "Resultados"), unsafe_allow_html=True)
+            st.markdown(step_header("Resultados"), unsafe_allow_html=True)
             st.markdown(cards_grid(todos_racios), unsafe_allow_html=True)
 
             with st.spinner("A gerar o diagnóstico..."):
