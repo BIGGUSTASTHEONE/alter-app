@@ -91,8 +91,7 @@ html, body, .stApp {{
 .stNumberInput label,
 .stFileUploader label,
 .stFileUploader p,
-[data-testid="stFileUploaderDropzoneInstructions"] span,
-[data-testid="stPills"] label {{
+[data-testid="stFileUploaderDropzoneInstructions"] span {{
     color: #8BAAC4 !important;
     font-weight: 600 !important;
     font-size: 0.80rem !important;
@@ -112,53 +111,7 @@ hr {{
     margin: 1.8rem 0 !important;
 }}
 
-/* === Pills do nível de linguagem === */
-/* Base: tipografia de todos os botões no radiogroup */
-[role="radiogroup"] button,
-[role="group"] button {{
-    font-size: 0.76rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.04em !important;
-    text-transform: uppercase !important;
-    transition: all 0.18s !important;
-    white-space: nowrap !important;
-}}
-/* Inativo: kind="pills" */
-[role="radiogroup"] button[kind="pills"],
-[role="group"] button[kind="pills"] {{
-    background: rgba(255,255,255,0.07) !important;
-    color: rgba(255,255,255,0.38) !important;
-    border: 1px solid rgba(255,255,255,0.16) !important;
-    box-shadow: none !important;
-}}
-/* Ativo por posição: kind="pillsActive" + nth-of-type */
-[role="radiogroup"] button:nth-of-type(1)[kind="pillsActive"],
-[role="group"] button:nth-of-type(1)[kind="pillsActive"] {{
-    background: #2D9B72 !important;
-    color: white !important;
-    border-color: #2D9B72 !important;
-    box-shadow: 0 0 12px #2D9B7250 !important;
-}}
-[role="radiogroup"] button:nth-of-type(2)[kind="pillsActive"],
-[role="group"] button:nth-of-type(2)[kind="pillsActive"] {{
-    background: {OURO} !important;
-    color: white !important;
-    border-color: {OURO} !important;
-    box-shadow: 0 0 12px {OURO}50 !important;
-}}
-[role="radiogroup"] button:nth-of-type(3)[kind="pillsActive"],
-[role="group"] button:nth-of-type(3)[kind="pillsActive"] {{
-    background: #7C3AED !important;
-    color: white !important;
-    border-color: #7C3AED !important;
-    box-shadow: 0 0 12px #7C3AED50 !important;
-}}
-/* Forçar pills na mesma linha */
-[role="radiogroup"],
-[role="group"] {{
-    flex-wrap: nowrap !important;
-    gap: 6px !important;
-}}
+/* Pills: estilo gerido por nivel_pills_selector() via session_state + CSS :has() */
 
 /* Botões — ouro sobre navy */
 .stButton > button {{
@@ -336,6 +289,79 @@ def fonte_caption() -> str:
 
 
 # ---------------------------------------------------------------------------
+# SELECTOR DE NÍVEL DE LINGUAGEM (pills via session_state)
+# ---------------------------------------------------------------------------
+
+_OPCOES_PILLS = {
+    "Simples":     {"nivel": 1, "cor": "#2D9B72", "slug": "simples"},
+    "Equilibrada": {"nivel": 2, "cor": "#C9912A", "slug": "equilibrada"},
+    "Técnica":     {"nivel": 3, "cor": "#7C3AED", "slug": "tecnica"},
+}
+
+
+def nivel_pills_selector(key: str = "nivel_pills", default: str = "Equilibrada") -> str:
+    """
+    Selector de pills robusto: estado em session_state.
+    Estilo via .st-key-{slug} que o Streamlit adiciona ao container do botão —
+    seletor mais específico que o CSS global, sem sentinelas nem :has().
+    Retorna o nome da opção seleccionada.
+    """
+    if key not in st.session_state:
+        st.session_state[key] = default
+
+    current = st.session_state[key]
+
+    st.markdown(
+        '<div style="color:#8BAAC4;font-weight:600;font-size:0.80rem;'
+        'letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.5rem;">'
+        'Nível de linguagem</div>',
+        unsafe_allow_html=True,
+    )
+
+    # CSS gerado por Python com base no estado actual — sem rastrear estado em CSS
+    css_parts = []
+    for nome, cfg in _OPCOES_PILLS.items():
+        btn_key = f"{key}_{cfg['slug']}"
+        cor = cfg["cor"]
+        if nome == current:
+            style = (
+                f"background:{cor} !important;"
+                f"color:#fff !important;"
+                f"border:1px solid {cor} !important;"
+                f"box-shadow:0 0 12px {cor}50 !important;"
+            )
+        else:
+            style = (
+                "background:rgba(255,255,255,0.07) !important;"
+                "color:rgba(255,255,255,0.38) !important;"
+                "border:1px solid rgba(255,255,255,0.16) !important;"
+                "box-shadow:none !important;"
+            )
+        # .st-key-{btn_key} .stButton > button — especificidade (0,2,1) > (0,1,1) do CSS global
+        css_parts.append(
+            f".st-key-{btn_key} .stButton > button {{"
+            f"{style}"
+            f"border-radius:20px !important;"
+            f"font-size:0.76rem !important;"
+            f"font-weight:700 !important;"
+            f"letter-spacing:0.04em !important;"
+            f"text-transform:uppercase !important;"
+            f"transition:all 0.18s !important;}}"
+        )
+
+    st.markdown(f"<style>{''.join(css_parts)}</style>", unsafe_allow_html=True)
+
+    cols = st.columns(len(_OPCOES_PILLS))
+    for col, (nome, cfg) in zip(cols, _OPCOES_PILLS.items()):
+        with col:
+            if st.button(nome, key=f"{key}_{cfg['slug']}", use_container_width=True):
+                st.session_state[key] = nome
+                st.rerun()
+
+    return current
+
+
+# ---------------------------------------------------------------------------
 # DIAGNÓSTICO
 # ---------------------------------------------------------------------------
 
@@ -421,21 +447,8 @@ with col2:
         ),
     )
 
-_OPCOES = {"Simples": (1, "#2D9B72"), "Equilibrada": (2, "#C9912A"), "Técnica": (3, "#7C3AED")}
-nivel_str = st.pills(
-    "Nível de linguagem",
-    list(_OPCOES.keys()),
-    default="Equilibrada",
-    key="nivel_pills",
-    help=(
-        "**Simples** — linguagem acessível, sem jargão.\n\n"
-        "**Equilibrada** — alguma terminologia financeira.\n\n"
-        "**Técnica** — linguagem de especialista (analistas, contabilistas)."
-    ),
-)
-if nivel_str is None:
-    nivel_str = "Equilibrada"
-nivel_linguagem, _ = _OPCOES[nivel_str]
+nivel_str = nivel_pills_selector()
+nivel_linguagem = _OPCOES_PILLS[nivel_str]["nivel"]
 
 st.divider()
 
