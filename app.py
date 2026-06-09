@@ -111,6 +111,42 @@ hr {{
     margin: 1.8rem 0 !important;
 }}
 
+/* === Segmented control (radio horizontal → 3 segmentos) === */
+[data-testid="stRadio"] [role="radiogroup"] {{
+    gap: 4px !important;
+    background: rgba(255,255,255,0.06) !important;
+    border-radius: 10px !important;
+    padding: 4px !important;
+    flex-direction: row !important;
+}}
+[data-testid="stRadio"] [role="radiogroup"] > label {{
+    flex: 1 !important;
+    border-radius: 7px !important;
+    padding: 8px 2px !important;
+    margin: 0 !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: background 0.15s, color 0.15s !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+}}
+/* Esconder o círculo do radio */
+[data-testid="stRadio"] [data-baseweb="radio"] {{
+    display: none !important;
+}}
+/* Cores por opção (estado inativo) */
+[data-testid="stRadio"] [role="radiogroup"] > label:nth-child(1) {{
+    color: #2D9B72 !important;
+}}
+[data-testid="stRadio"] [role="radiogroup"] > label:nth-child(2) {{
+    color: {OURO} !important;
+}}
+[data-testid="stRadio"] [role="radiogroup"] > label:nth-child(3) {{
+    color: {AZUL} !important;
+}}
+
 /* Botões — ouro sobre navy */
 .stButton > button {{
     background-color: {OURO} !important;
@@ -372,39 +408,36 @@ with col2:
         ),
     )
 with col3:
-    nivel_linguagem = st.select_slider(
+    _OPCOES = {"Simples": (1, "#2D9B72"), "Equilibrada": (2, "#C9912A"), "Técnica": (3, "#1D6FA4")}
+    nivel_str = st.radio(
         "Nível de linguagem",
-        options=[1, 2, 3],
-        value=2,
-        format_func=lambda x: NIVEIS_LINGUAGEM[x][0],
-        key="nivel_linguagem",
+        list(_OPCOES.keys()),
+        index=1,
+        horizontal=True,
+        key="nivel_radio",
         help=(
             "**Simples** — linguagem acessível, sem jargão.\n\n"
             "**Equilibrada** — alguma terminologia financeira.\n\n"
             "**Técnica** — linguagem de especialista (analistas, contabilistas)."
         ),
     )
-    _COR_NIVEL  = {1: "#2D9B72", 2: "#C9912A", 3: "#1D6FA4"}
-    _NOME_NIVEL = {1: "Simples", 2: "Equilibrada", 3: "Técnica"}
-    _cor = _COR_NIVEL[nivel_linguagem]
-    _nome = _NOME_NIVEL[nivel_linguagem]
+    nivel_linguagem, _cor = _OPCOES[nivel_str]
+    _idx = list(_OPCOES.keys()).index(nivel_str) + 1
     st.markdown(f"""
     <style>
-    /* Esconder apenas a etiqueta flutuante (absolutamente posicionada) acima do thumb */
-    [data-testid="stSlider"] [style*="position: absolute"] {{
-        display: none !important;
+    /* Segmento ativo — preenche com a cor do nível */
+    [data-testid="stRadio"] [role="radiogroup"] > label:nth-child({_idx}) {{
+        background: {_cor} !important;
+        color: white !important;
     }}
-    /* Thumb */
-    [data-testid="stSlider"] div[role="slider"] {{
-        background-color: {_cor} !important;
-        border-color: {_cor} !important;
-        box-shadow: 0 0 0 5px {_cor}33 !important;
+    [data-testid="stRadio"] [role="radiogroup"] > label:nth-child({_idx}) * {{
+        color: white !important;
     }}
     </style>
     <div style="background:{_cor}22;border:1.5px solid {_cor}70;border-radius:8px;
-                padding:7px 12px;text-align:center;margin-top:6px;">
+                padding:7px 12px;text-align:center;margin-top:8px;">
         <span style="color:{_cor};font-weight:700;font-size:0.85rem;
-                     letter-spacing:0.04em;">{_nome.upper()}</span>
+                     letter-spacing:0.04em;">{nivel_str.upper()}</span>
     </div>
     """, unsafe_allow_html=True)
 
