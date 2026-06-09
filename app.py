@@ -384,6 +384,17 @@ with col3:
             "**Técnica** — linguagem de especialista (analistas, contabilistas)."
         ),
     )
+    _COR_NIVEL  = {1: "#2D9B72", 2: "#C9912A", 3: "#1D6FA4"}
+    _NOME_NIVEL = {1: "Simples", 2: "Equilibrada", 3: "Técnica"}
+    _cor = _COR_NIVEL[nivel_linguagem]
+    _nome = _NOME_NIVEL[nivel_linguagem]
+    st.markdown(f"""
+    <div style="background:{_cor}22;border:1.5px solid {_cor}80;border-radius:8px;
+                padding:7px 12px;text-align:center;margin-top:6px;">
+        <span style="color:{_cor};font-weight:700;font-size:0.85rem;
+                     letter-spacing:0.04em;">{_nome.upper()}</span>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.divider()
 
