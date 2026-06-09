@@ -251,6 +251,6 @@ BENCHMARKS = {
 def obter(setor, dimensao):
     """
     Devolve os benchmarks para a combinação setor+dimensão.
-    Usa BENCHMARK_GERAL como fallback se não houver dados suficientes.
+    Faz merge com BENCHMARK_GERAL: chaves em falta no setor usam o valor geral.
     """
-    return BENCHMARKS.get((setor, dimensao), BENCHMARK_GERAL)
+    return {**BENCHMARK_GERAL, **BENCHMARKS.get((setor, dimensao), {})}
