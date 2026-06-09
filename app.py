@@ -111,40 +111,27 @@ hr {{
     margin: 1.8rem 0 !important;
 }}
 
-/* === Segmented control (radio horizontal → 3 segmentos) === */
-[data-testid="stRadio"] [role="radiogroup"] {{
-    gap: 4px !important;
-    background: rgba(255,255,255,0.06) !important;
-    border-radius: 10px !important;
-    padding: 4px !important;
-    flex-direction: row !important;
-}}
-[data-testid="stRadio"] [role="radiogroup"] > label {{
-    flex: 1 !important;
-    border-radius: 7px !important;
-    padding: 8px 2px !important;
-    margin: 0 !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    transition: background 0.15s, color 0.15s !important;
-    font-size: 0.75rem !important;
+/* === Pills do nível de linguagem === */
+[data-testid="stPills"] button {{
+    font-size: 0.76rem !important;
     font-weight: 700 !important;
-    letter-spacing: 0.05em !important;
+    letter-spacing: 0.04em !important;
     text-transform: uppercase !important;
+    border-radius: 8px !important;
+    padding: 6px 10px !important;
+    transition: all 0.15s !important;
 }}
-/* Esconder o círculo do radio */
-[data-testid="stRadio"] [data-baseweb="radio"] {{
-    display: none !important;
-}}
-/* Cores por opção (estado inativo) */
-[data-testid="stRadio"] [role="radiogroup"] > label:nth-child(1) {{
+[data-testid="stPills"] button:nth-child(1) {{
     color: #2D9B72 !important;
+    border-color: #2D9B7260 !important;
 }}
-[data-testid="stRadio"] [role="radiogroup"] > label:nth-child(2) {{
+[data-testid="stPills"] button:nth-child(2) {{
     color: {OURO} !important;
+    border-color: {OURO}60 !important;
 }}
-[data-testid="stRadio"] [role="radiogroup"] > label:nth-child(3) {{
+[data-testid="stPills"] button:nth-child(3) {{
     color: {AZUL} !important;
+    border-color: {AZUL}60 !important;
 }}
 
 /* Botões — ouro sobre navy */
@@ -409,29 +396,28 @@ with col2:
     )
 with col3:
     _OPCOES = {"Simples": (1, "#2D9B72"), "Equilibrada": (2, "#C9912A"), "Técnica": (3, "#1D6FA4")}
-    nivel_str = st.radio(
+    nivel_str = st.pills(
         "Nível de linguagem",
         list(_OPCOES.keys()),
-        index=1,
-        horizontal=True,
-        key="nivel_radio",
+        default="Equilibrada",
+        key="nivel_pills",
         help=(
             "**Simples** — linguagem acessível, sem jargão.\n\n"
             "**Equilibrada** — alguma terminologia financeira.\n\n"
             "**Técnica** — linguagem de especialista (analistas, contabilistas)."
         ),
     )
+    if nivel_str is None:
+        nivel_str = "Equilibrada"
     nivel_linguagem, _cor = _OPCOES[nivel_str]
     _idx = list(_OPCOES.keys()).index(nivel_str) + 1
     st.markdown(f"""
     <style>
-    /* Segmento ativo — preenche com a cor do nível */
-    [data-testid="stRadio"] [role="radiogroup"] > label:nth-child({_idx}) {{
+    [data-testid="stPills"] button:nth-child({_idx}) {{
         background: {_cor} !important;
         color: white !important;
-    }}
-    [data-testid="stRadio"] [role="radiogroup"] > label:nth-child({_idx}) * {{
-        color: white !important;
+        border-color: {_cor} !important;
+        box-shadow: 0 0 10px {_cor}50 !important;
     }}
     </style>
     <div style="background:{_cor}22;border:1.5px solid {_cor}70;border-radius:8px;
