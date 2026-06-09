@@ -3,11 +3,11 @@ app.py
 Interface da aplicação Alter (Streamlit) e orquestração do fluxo.
 
 Fluxo:
-  0. Contexto: setor de atividade e nível de linguagem do diagnóstico.
+  0. Contexto: setor de atividade, dimensão e nível de linguagem.
   1. Entrada: upload do PDF.
   2. Extração: a IA lê o documento e propõe os dados.
   3. Confirmação: o utilizador vê e corrige os dados antes de avançar.
-  4. Cálculo determinístico dos rácios (liquidez.py).
+  4. Análise: tabs por categoria (Liquidez / Solvabilidade).
   5. Diagnóstico em linguagem natural pela IA, contextualizado pelo setor.
 """
 
@@ -18,7 +18,9 @@ from anthropic import Anthropic
 from dotenv import load_dotenv
 
 import liquidez
+import solvabilidade
 import extracao
+from benchmarks import FONTE
 
 load_dotenv()
 cliente = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
@@ -58,7 +60,7 @@ NIVEIS_LINGUAGEM = {
 }
 
 
-def gerar_diagnostico(racios, setor, dimensao, nivel_linguagem):
+def gerar_diagnostico(racios, categoria, setor, dimensao, nivel_linguagem):
     _, instrucao_linguagem = NIVEIS_LINGUAGEM[nivel_linguagem]
     linhas = "\n".join(
         f"- {r['racio']}: {r['valor']} ({r['avaliacao']}, "
@@ -66,16 +68,16 @@ def gerar_diagnostico(racios, setor, dimensao, nivel_linguagem):
         for r in racios
     )
     instrucao = (
-        f"És um analista financeiro a dar uma segunda opinião sobre a liquidez "
+        f"És um analista financeiro a dar uma segunda opinião sobre a {categoria.lower()} "
         f"de uma empresa do setor '{setor}', de dimensão '{dimensao}'. "
         f"{instrucao_linguagem} "
         "Com base nos rácios e posições sectoriais calculados em baixo, escreve "
         "um diagnóstico em português europeu que identifique pontos fortes, sinais "
         "de alerta e uma conclusão. Os percentis são factos matemáticos calculados "
-        "com dados do Banco de Portugal — usa-os para contextualizar, mas não os "
-        "recalcules nem os interpretes de forma diferente do que está indicado. "
-        "Não inventes valores nem outros rácios.\n\n"
-        f"RÁCIOS DE LIQUIDEZ:\n{linhas}"
+        "com dados do SABI — usa-os para contextualizar, mas não os recalcules "
+        "nem os interpretes de forma diferente do que está indicado. "
+        f"Não inventes valores nem outros rácios.\n\n"
+        f"RÁCIOS DE {categoria.upper()}:\n{linhas}"
     )
     resposta = cliente.messages.create(
         model=MODELO_DIAGNOSTICO,
@@ -83,6 +85,32 @@ def gerar_diagnostico(racios, setor, dimensao, nivel_linguagem):
         messages=[{"role": "user", "content": instrucao}],
     )
     return resposta.content[0].text.strip()
+
+
+def mostrar_resultados(racios, categoria, setor, dimensao, nivel_linguagem):
+    tabela = pd.DataFrame(racios)
+    tabela.columns = ["Rácio", "Fórmula", "Valor", "Avaliação", "Percentil no setor"]
+    tabela["Percentil no setor"] = tabela["Percentil no setor"].apply(
+        lambda p: f"melhor que {p}%"
+    )
+    st.table(tabela)
+
+    st.subheader("Comparação visual")
+    grafico = pd.DataFrame({r["racio"]: [r["valor"]] for r in racios}).T
+    grafico.columns = ["Valor"]
+    st.bar_chart(grafico)
+
+    st.subheader("Diagnóstico")
+    with st.spinner("A gerar o diagnóstico..."):
+        st.write(gerar_diagnostico(racios, categoria, setor, dimensao, nivel_linguagem))
+
+    st.divider()
+    st.caption(
+        f"Dados comparativos: {FONTE['nome']} · "
+        f"Dados de {FONTE['ano_dados']} · "
+        f"Consultado em {FONTE['data_consulta']} · "
+        f"{FONTE['url']}"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -110,8 +138,7 @@ with col1:
             "O setor é usado para contextualizar o diagnóstico — "
             "os rácios de referência variam bastante entre setores.\n\n"
             "*Exemplo: uma Liquidez Geral de 1.2 é normal no retalho "
-            "(inventário rotativo) mas preocupante na indústria transformadora.*\n\n"
-            "Futuramente será cruzado com o CAE para benchmarks específicos."
+            "(inventário rotativo) mas preocupante na indústria transformadora.*"
         ),
     )
 with col2:
@@ -178,48 +205,42 @@ if st.session_state.dados_extraidos is not None:
     )
     d = st.session_state.dados_extraidos
 
-    ac = st.number_input("Ativo Corrente", value=float(d.get("ativo_corrente") or 0.0))
-    pc = st.number_input("Passivo Corrente", value=float(d.get("passivo_corrente") or 0.0))
-    inv = st.number_input("Inventários", value=float(d.get("inventarios") or 0.0))
-    caixa = st.number_input("Caixa e Depósitos Bancários", value=float(d.get("caixa_e_depositos") or 0.0))
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Ativo")
+        ac    = st.number_input("Ativo Corrente",    value=float(d.get("ativo_corrente")    or 0.0))
+        inv   = st.number_input("Inventários",       value=float(d.get("inventarios")       or 0.0))
+        caixa = st.number_input("Caixa e Depósitos", value=float(d.get("caixa_e_depositos") or 0.0))
+    with col2:
+        st.subheader("Passivo e Capital")
+        pc    = st.number_input("Passivo Corrente",      value=float(d.get("passivo_corrente")     or 0.0))
+        pnc   = st.number_input("Passivo Não Corrente",  value=float(d.get("passivo_nao_corrente") or 0.0))
+        cp    = st.number_input("Capital Próprio",       value=float(d.get("capital_proprio")      or 0.0))
 
-    # --- Passos 4 e 5: cálculo e diagnóstico ---
-    if st.button("Analisar liquidez"):
-        if pc == 0:
-            st.error("O Passivo Corrente não pode ser zero (é o denominador dos rácios).")
-        else:
-            dados = {
-                "ativo_corrente": ac,
-                "passivo_corrente": pc,
-                "inventarios": inv,
-                "caixa_e_depositos": caixa,
-            }
-            racios = liquidez.analisar_liquidez(dados, setor, dimensao)
+    # --- Passo 4: análise por categoria ---
+    st.header("3. Análise")
+    tab_liq, tab_solv = st.tabs(["Liquidez", "Solvabilidade"])
 
-            st.header("3. Rácios de liquidez")
-            tabela = pd.DataFrame(racios)
-            tabela.columns = ["Rácio", "Fórmula", "Valor", "Avaliação", "Percentil no setor"]
-            tabela["Percentil no setor"] = tabela["Percentil no setor"].apply(
-                lambda p: f"melhor que {p}%"
-            )
-            st.table(tabela)
+    with tab_liq:
+        if st.button("Analisar liquidez"):
+            if pc == 0:
+                st.error("O Passivo Corrente não pode ser zero.")
+            else:
+                racios = liquidez.analisar_liquidez(
+                    {"ativo_corrente": ac, "passivo_corrente": pc,
+                     "inventarios": inv, "caixa_e_depositos": caixa},
+                    setor, dimensao,
+                )
+                mostrar_resultados(racios, "Liquidez", setor, dimensao, nivel_linguagem)
 
-            st.subheader("Comparação visual")
-            grafico = pd.DataFrame(
-                {r["racio"]: [r["valor"]] for r in racios}
-            ).T
-            grafico.columns = ["Valor"]
-            st.bar_chart(grafico)
-
-            st.header("4. Diagnóstico")
-            with st.spinner("A gerar o diagnóstico..."):
-                st.write(gerar_diagnostico(racios, setor, dimensao, nivel_linguagem))
-
-            from benchmarks import FONTE
-            st.divider()
-            st.caption(
-                f"Dados comparativos: {FONTE['nome']} · "
-                f"Exercício {FONTE['ano_dados']} · "
-                f"Consultado em {FONTE['data_consulta']} · "
-                f"{FONTE['url']}"
-            )
+    with tab_solv:
+        if st.button("Analisar solvabilidade"):
+            if pc + pnc == 0:
+                st.error("O Passivo Total não pode ser zero.")
+            else:
+                racios = solvabilidade.analisar_solvabilidade(
+                    {"capital_proprio": cp, "passivo_corrente": pc,
+                     "passivo_nao_corrente": pnc},
+                    setor, dimensao,
+                )
+                mostrar_resultados(racios, "Solvabilidade", setor, dimensao, nivel_linguagem)
