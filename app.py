@@ -127,7 +127,7 @@ hr {{
     transition: all 0.18s !important;
 }}
 .stButton > button:hover {{
-    background-color: #B8811F !important;
+    background-color: #6dd9f0 !important;
     box-shadow: 0 4px 18px rgba(65,195,224,0.45) !important;
     transform: translateY(-1px);
 }}
