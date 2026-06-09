@@ -87,31 +87,6 @@ def gerar_diagnostico(racios, categoria, setor, dimensao, nivel_linguagem):
     return resposta.content[0].text.strip()
 
 
-def mostrar_resultados(racios, categoria, setor, dimensao, nivel_linguagem):
-    tabela = pd.DataFrame(racios)
-    tabela.columns = ["Rácio", "Fórmula", "Valor", "Avaliação", "Percentil no setor"]
-    tabela["Percentil no setor"] = tabela["Percentil no setor"].apply(
-        lambda p: f"melhor que {p}%"
-    )
-    st.table(tabela)
-
-    st.subheader("Comparação visual")
-    grafico = pd.DataFrame({r["racio"]: [r["valor"]] for r in racios}).T
-    grafico.columns = ["Valor"]
-    st.bar_chart(grafico)
-
-    st.subheader("Diagnóstico")
-    with st.spinner("A gerar o diagnóstico..."):
-        st.write(gerar_diagnostico(racios, categoria, setor, dimensao, nivel_linguagem))
-
-    st.divider()
-    st.caption(
-        f"Dados comparativos: {FONTE['nome']} · "
-        f"Dados de {FONTE['ano_dados']} · "
-        f"Consultado em {FONTE['data_consulta']} · "
-        f"{FONTE['url']}"
-    )
-
 
 # ---------------------------------------------------------------------------
 # INTERFACE
@@ -217,30 +192,50 @@ if st.session_state.dados_extraidos is not None:
         pnc   = st.number_input("Passivo Não Corrente",  value=float(d.get("passivo_nao_corrente") or 0.0))
         cp    = st.number_input("Capital Próprio",       value=float(d.get("capital_proprio")      or 0.0))
 
-    # --- Passo 4: análise por categoria ---
-    st.header("3. Análise")
-    tab_liq, tab_solv = st.tabs(["Liquidez", "Solvabilidade"])
+    # --- Passo 4: análise ---
+    if st.button("Analisar"):
+        erros = []
+        if pc == 0:
+            erros.append("O Passivo Corrente não pode ser zero.")
+        if pc + pnc == 0:
+            erros.append("O Passivo Total não pode ser zero.")
+        if erros:
+            for e in erros:
+                st.error(e)
+        else:
+            racios_liq  = liquidez.analisar_liquidez(
+                {"ativo_corrente": ac, "passivo_corrente": pc,
+                 "inventarios": inv, "caixa_e_depositos": caixa},
+                setor, dimensao,
+            )
+            racios_solv = solvabilidade.analisar_solvabilidade(
+                {"capital_proprio": cp, "passivo_corrente": pc,
+                 "passivo_nao_corrente": pnc},
+                setor, dimensao,
+            )
+            todos_racios = racios_liq + racios_solv
 
-    with tab_liq:
-        if st.button("Analisar liquidez"):
-            if pc == 0:
-                st.error("O Passivo Corrente não pode ser zero.")
-            else:
-                racios = liquidez.analisar_liquidez(
-                    {"ativo_corrente": ac, "passivo_corrente": pc,
-                     "inventarios": inv, "caixa_e_depositos": caixa},
-                    setor, dimensao,
-                )
-                mostrar_resultados(racios, "Liquidez", setor, dimensao, nivel_linguagem)
+            st.header("3. Resultados")
+            tabela = pd.DataFrame(todos_racios)
+            tabela.columns = ["Rácio", "Fórmula", "Valor", "Avaliação", "Percentil no setor"]
+            tabela["Percentil no setor"] = tabela["Percentil no setor"].apply(
+                lambda p: f"melhor que {p}%"
+            )
+            st.table(tabela)
 
-    with tab_solv:
-        if st.button("Analisar solvabilidade"):
-            if pc + pnc == 0:
-                st.error("O Passivo Total não pode ser zero.")
-            else:
-                racios = solvabilidade.analisar_solvabilidade(
-                    {"capital_proprio": cp, "passivo_corrente": pc,
-                     "passivo_nao_corrente": pnc},
-                    setor, dimensao,
-                )
-                mostrar_resultados(racios, "Solvabilidade", setor, dimensao, nivel_linguagem)
+            st.subheader("Comparação visual")
+            grafico = pd.DataFrame({r["racio"]: [r["valor"]] for r in todos_racios}).T
+            grafico.columns = ["Valor"]
+            st.bar_chart(grafico)
+
+            st.subheader("Diagnóstico")
+            with st.spinner("A gerar o diagnóstico..."):
+                st.write(gerar_diagnostico(todos_racios, "Liquidez e Solvabilidade", setor, dimensao, nivel_linguagem))
+
+            st.divider()
+            st.caption(
+                f"Dados comparativos: {FONTE['nome']} · "
+                f"Dados de {FONTE['ano_dados']} · "
+                f"Consultado em {FONTE['data_consulta']} · "
+                f"{FONTE['url']}"
+            )
