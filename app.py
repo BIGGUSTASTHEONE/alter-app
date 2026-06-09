@@ -91,7 +91,8 @@ html, body, .stApp {{
 .stNumberInput label,
 .stFileUploader label,
 .stFileUploader p,
-[data-testid="stFileUploaderDropzoneInstructions"] span {{
+[data-testid="stFileUploaderDropzoneInstructions"] span,
+[data-testid="stPills"] label {{
     color: #8BAAC4 !important;
     font-weight: 600 !important;
     font-size: 0.80rem !important;
@@ -111,39 +112,52 @@ hr {{
     margin: 1.8rem 0 !important;
 }}
 
-/* === Pills do nível de linguagem — via atributos semânticos === */
-/* Inativo */
-[role="radiogroup"] button, [role="group"] button {{
+/* === Pills do nível de linguagem === */
+/* Base: tipografia de todos os botões no radiogroup */
+[role="radiogroup"] button,
+[role="group"] button {{
     font-size: 0.76rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.04em !important;
     text-transform: uppercase !important;
     transition: all 0.18s !important;
+    white-space: nowrap !important;
+}}
+/* Inativo: kind="pills" */
+[role="radiogroup"] button[kind="pills"],
+[role="group"] button[kind="pills"] {{
     background: rgba(255,255,255,0.07) !important;
     color: rgba(255,255,255,0.38) !important;
     border: 1px solid rgba(255,255,255,0.16) !important;
+    box-shadow: none !important;
 }}
-/* Ativo: cor por posição */
-[role="radiogroup"] button[aria-pressed="true"]:nth-child(1),
-[role="group"] button[aria-pressed="true"]:nth-child(1) {{
+/* Ativo por posição: kind="pillsActive" + nth-of-type */
+[role="radiogroup"] button:nth-of-type(1)[kind="pillsActive"],
+[role="group"] button:nth-of-type(1)[kind="pillsActive"] {{
     background: #2D9B72 !important;
     color: white !important;
     border-color: #2D9B72 !important;
     box-shadow: 0 0 12px #2D9B7250 !important;
 }}
-[role="radiogroup"] button[aria-pressed="true"]:nth-child(2),
-[role="group"] button[aria-pressed="true"]:nth-child(2) {{
+[role="radiogroup"] button:nth-of-type(2)[kind="pillsActive"],
+[role="group"] button:nth-of-type(2)[kind="pillsActive"] {{
     background: {OURO} !important;
     color: white !important;
     border-color: {OURO} !important;
     box-shadow: 0 0 12px {OURO}50 !important;
 }}
-[role="radiogroup"] button[aria-pressed="true"]:nth-child(3),
-[role="group"] button[aria-pressed="true"]:nth-child(3) {{
+[role="radiogroup"] button:nth-of-type(3)[kind="pillsActive"],
+[role="group"] button:nth-of-type(3)[kind="pillsActive"] {{
     background: #7C3AED !important;
     color: white !important;
     border-color: #7C3AED !important;
     box-shadow: 0 0 12px #7C3AED50 !important;
+}}
+/* Forçar pills na mesma linha */
+[role="radiogroup"],
+[role="group"] {{
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
 }}
 
 /* Botões — ouro sobre navy */
@@ -379,7 +393,7 @@ if "texto_pdf" not in st.session_state:
 
 # --- Passo 1: contexto ---
 st.markdown(step_header("Contexto da empresa"), unsafe_allow_html=True)
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 with col1:
     setor = st.selectbox(
         "Setor de atividade",
@@ -406,22 +420,22 @@ with col2:
             "**Grande** — ≥ 250 trabalhadores ou VN > 50 M€ ou balanço > 43 M€"
         ),
     )
-with col3:
-    _OPCOES = {"Simples": (1, "#2D9B72"), "Equilibrada": (2, "#C9912A"), "Técnica": (3, "#7C3AED")}
-    nivel_str = st.pills(
-        "Nível de linguagem",
-        list(_OPCOES.keys()),
-        default="Equilibrada",
-        key="nivel_pills",
-        help=(
-            "**Simples** — linguagem acessível, sem jargão.\n\n"
-            "**Equilibrada** — alguma terminologia financeira.\n\n"
-            "**Técnica** — linguagem de especialista (analistas, contabilistas)."
-        ),
-    )
-    if nivel_str is None:
-        nivel_str = "Equilibrada"
-    nivel_linguagem, _cor = _OPCOES[nivel_str]
+
+_OPCOES = {"Simples": (1, "#2D9B72"), "Equilibrada": (2, "#C9912A"), "Técnica": (3, "#7C3AED")}
+nivel_str = st.pills(
+    "Nível de linguagem",
+    list(_OPCOES.keys()),
+    default="Equilibrada",
+    key="nivel_pills",
+    help=(
+        "**Simples** — linguagem acessível, sem jargão.\n\n"
+        "**Equilibrada** — alguma terminologia financeira.\n\n"
+        "**Técnica** — linguagem de especialista (analistas, contabilistas)."
+    ),
+)
+if nivel_str is None:
+    nivel_str = "Equilibrada"
+nivel_linguagem, _ = _OPCOES[nivel_str]
 
 st.divider()
 
