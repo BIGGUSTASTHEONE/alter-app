@@ -217,7 +217,7 @@ def card_racio(r: dict) -> str:
     label = _label_avaliacao(r["avaliacao"])
     pct   = r["percentil"]
     return f"""
-    <div style="background:#F0F3F7;border-radius:12px;padding:22px 24px 18px;
+    <div style="background:#E3E8EF;border-radius:12px;padding:22px 24px 18px;
                 border-top:4px solid {cor};
                 box-shadow:0 1px 3px rgba(10,37,64,0.06),0 2px 8px rgba(10,37,64,0.04);">
         <div style="font-size:0.70rem;color:#8A96A8;font-weight:700;
@@ -267,16 +267,16 @@ def _md_to_html(texto: str) -> str:
         if not s:
             continue
         if s.startswith("### "):
-            s = f'<h4 style="margin:1.1em 0 0.3em;color:{NAVY};font-size:0.92rem;font-weight:700;">{s[4:]}</h4>'
+            s = f'<h4 style="margin:1.1em 0 0.3em;color:{NAVY};font-size:1.05rem;font-weight:700;">{s[4:]}</h4>'
         elif s.startswith("## "):
-            s = f'<h3 style="margin:1.2em 0 0.4em;color:{NAVY};font-size:1.0rem;font-weight:700;">{s[3:]}</h3>'
+            s = f'<h3 style="margin:1.2em 0 0.4em;color:{NAVY};font-size:1.18rem;font-weight:700;">{s[3:]}</h3>'
         elif s.startswith("# "):
-            s = f'<h2 style="margin:0 0 0.5em;color:{NAVY};font-size:1.1rem;font-weight:800;">{s[2:]}</h2>'
+            s = f'<h2 style="margin:0 0 0.5em;color:{NAVY};font-size:1.35rem;font-weight:800;">{s[2:]}</h2>'
         elif s == "---":
             s = f'<hr style="border:none;border-top:1px solid #D1D9E6;margin:0.8em 0;">'
         else:
             s = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', s)
-            s = f'<p style="margin:0 0 0.85em 0;color:{NAVY};line-height:1.78;">{s}</p>'
+            s = f'<p style="margin:0 0 0.85em 0;color:{NAVY};font-size:1.05rem;line-height:1.78;">{s}</p>'
         html_parts.append(s)
     return "".join(html_parts)
 
@@ -284,16 +284,26 @@ def _md_to_html(texto: str) -> str:
 def diagnostico_card(texto: str) -> str:
     conteudo = _md_to_html(texto)
     return f"""
-    <div style="background:#F0F3F7;border-radius:12px;padding:28px 32px;
+    <div style="background:#E3E8EF;border-radius:12px;padding:28px 32px;
                 border-left:4px solid {OURO};
                 box-shadow:0 1px 3px rgba(10,37,64,0.06),0 2px 8px rgba(10,37,64,0.04);">
         <div style="font-size:0.70rem;color:#8A96A8;font-weight:700;
                     letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;">
             Diagnóstico &nbsp;·&nbsp; IA
         </div>
-        <div style="font-size:0.95rem;">{conteudo}</div>
+        <div style="font-size:1.05rem;">{conteudo}</div>
     </div>
     """
+
+
+def _num_input(label: str, value: float) -> float:
+    val = st.number_input(label, value=float(value), step=1.0, format="%.0f")
+    st.markdown(
+        f'<div style="font-size:0.72rem;color:#8BAAC4;margin-top:-0.7rem;margin-bottom:0.4rem;">'
+        f'{val:,.0f} €</div>'.replace(",", "."),
+        unsafe_allow_html=True,
+    )
+    return val
 
 
 def fonte_caption() -> str:
@@ -512,9 +522,9 @@ if st.session_state.dados_extraidos is not None:
             f"margin-top:0.4rem;'>Ativo</div>",
             unsafe_allow_html=True,
         )
-        ac    = st.number_input("Ativo Corrente",    value=float(d.get("ativo_corrente")    or 0.0))
-        inv   = st.number_input("Inventários",       value=float(d.get("inventarios")       or 0.0))
-        caixa = st.number_input("Caixa e Depósitos", value=float(d.get("caixa_e_depositos") or 0.0))
+        ac    = _num_input("Ativo Corrente",    d.get("ativo_corrente")    or 0.0)
+        inv   = _num_input("Inventários",       d.get("inventarios")       or 0.0)
+        caixa = _num_input("Caixa e Depósitos", d.get("caixa_e_depositos") or 0.0)
     with col2:
         st.markdown(
             f"<div style='font-size:0.78rem;font-weight:700;color:#8BAAC4;"
@@ -522,9 +532,9 @@ if st.session_state.dados_extraidos is not None:
             f"margin-top:0.4rem;'>Passivo e Capital</div>",
             unsafe_allow_html=True,
         )
-        pc  = st.number_input("Passivo Corrente",     value=float(d.get("passivo_corrente")     or 0.0))
-        pnc = st.number_input("Passivo Não Corrente", value=float(d.get("passivo_nao_corrente") or 0.0))
-        cp  = st.number_input("Capital Próprio",      value=float(d.get("capital_proprio")      or 0.0))
+        pc  = _num_input("Passivo Corrente",     d.get("passivo_corrente")     or 0.0)
+        pnc = _num_input("Passivo Não Corrente", d.get("passivo_nao_corrente") or 0.0)
+        cp  = _num_input("Capital Próprio",      d.get("capital_proprio")      or 0.0)
 
     st.markdown("<div style='margin-top:1rem;'></div>", unsafe_allow_html=True)
 
