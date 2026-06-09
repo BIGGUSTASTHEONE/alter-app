@@ -107,7 +107,7 @@ html, body, .stApp {{
 /* Divider */
 hr {{
     border: none !important;
-    border-top: 1px solid rgba(255,255,255,0.1) !important;
+    border-top: 1px solid rgba(64,10,10,0.6) !important;
     margin: 1.8rem 0 !important;
 }}
 
