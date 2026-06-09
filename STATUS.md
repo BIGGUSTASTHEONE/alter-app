@@ -1,6 +1,6 @@
 # Estado do Projecto — Alter
 
-_Última actualização: 9 de junho de 2026 (rev. tarde)_
+_Última actualização: 9 de junho de 2026 (rev. noite)_
 
 ## O que está feito
 
@@ -8,7 +8,7 @@ _Última actualização: 9 de junho de 2026 (rev. tarde)_
 - Upload de PDF do balanço
 - Extração automática dos dados via API (dois modos: texto e visão computacional)
 - Extrai 6 campos: ativo corrente, inventários, caixa, passivo corrente, passivo não corrente, capital próprio
-- Confirmação e correcção manual dos valores (layout em 2 colunas: Ativo | Passivo e Capital)
+- Confirmação e correcção manual dos valores (layout em 2 colunas: Ativo | Passivo e Capital); caption com separadores de milhares por baixo de cada input
 - Cálculo determinístico dos 4 rácios num único bloco "Analisar":
   - Liquidez Geral (Ativo Corrente / Passivo Corrente)
   - Liquidez Reduzida ((Ativo Corrente − Inventários) / Passivo Corrente)
@@ -44,8 +44,12 @@ _Última actualização: 9 de junho de 2026 (rev. tarde)_
 - Cabeçalho branded "ALTER" com sublinhado ciano
 - Steps com borda esquerda ciana em vez de badges numerados
 - Dividers horizontais na cor do acento ciano
-- Resultados: cards 2×2 com barra de percentil colorida (verde/âmbar/vermelho por avaliação)
+- Resultados: cards 2×2 com fundo `#E3E8EF`, barra de percentil colorida, badge semântico
+- Percentagens "top X%" em destaque — fonte aumentada (`1.1rem`)
+- Hover dos botões em ciano claro `#6dd9f0` (alinhado com o acento)
 - Diagnóstico em card com borda ciana — estilo parecer consultivo
+- Texto do diagnóstico: corpo `1.15rem`, títulos `##` a `1.32rem`, título principal `#` a `1.55rem`
+- Markdown do diagnóstico renderizado correctamente (negrito, títulos, separadores `---`)
 - Nível de linguagem: pills custom via `session_state` + CSS `st-key-*`; cores Simples=verde, Equilibrada=ouro `#C9912A`, Técnica=violeta (independentes do acento estrutural)
 - Tema Streamlit configurado via `.streamlit/config.toml`
 - Gráfico de barras removido em favor dos cards
