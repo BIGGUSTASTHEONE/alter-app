@@ -217,7 +217,7 @@ def card_racio(r: dict) -> str:
     label = _label_avaliacao(r["avaliacao"])
     pct   = r["percentil"]
     return f"""
-    <div style="background:white;border-radius:12px;padding:22px 24px 18px;
+    <div style="background:#F0F3F7;border-radius:12px;padding:22px 24px 18px;
                 border-top:4px solid {cor};
                 box-shadow:0 1px 3px rgba(10,37,64,0.06),0 2px 8px rgba(10,37,64,0.04);">
         <div style="font-size:0.70rem;color:#8A96A8;font-weight:700;
@@ -237,8 +237,8 @@ def card_racio(r: dict) -> str:
                          font-weight:700;letter-spacing:0.03em;">
                 {label.upper()}
             </span>
-            <span style="font-size:0.78rem;color:#8A96A8;">
-                top <strong style="color:{NAVY};font-size:0.90rem;">{pct}%</strong>
+            <span style="font-size:0.88rem;color:#8A96A8;">
+                top <strong style="color:{NAVY};font-size:1.1rem;">{pct}%</strong>
             </span>
         </div>
         <div style="background:#EEF2F7;border-radius:4px;height:3px;margin-top:10px;">
@@ -258,20 +258,40 @@ def cards_grid(racios: list) -> str:
     """
 
 
+def _md_to_html(texto: str) -> str:
+    import re
+    linhas = texto.split("\n")
+    html_parts = []
+    for linha in linhas:
+        s = linha.strip()
+        if not s:
+            continue
+        if s.startswith("### "):
+            s = f'<h4 style="margin:1.1em 0 0.3em;color:{NAVY};font-size:0.92rem;font-weight:700;">{s[4:]}</h4>'
+        elif s.startswith("## "):
+            s = f'<h3 style="margin:1.2em 0 0.4em;color:{NAVY};font-size:1.0rem;font-weight:700;">{s[3:]}</h3>'
+        elif s.startswith("# "):
+            s = f'<h2 style="margin:0 0 0.5em;color:{NAVY};font-size:1.1rem;font-weight:800;">{s[2:]}</h2>'
+        elif s == "---":
+            s = f'<hr style="border:none;border-top:1px solid #D1D9E6;margin:0.8em 0;">'
+        else:
+            s = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', s)
+            s = f'<p style="margin:0 0 0.85em 0;color:{NAVY};line-height:1.78;">{s}</p>'
+        html_parts.append(s)
+    return "".join(html_parts)
+
+
 def diagnostico_card(texto: str) -> str:
-    paragrafos = "".join(
-        f'<p style="margin:0 0 0.85em 0;color:{NAVY};line-height:1.78;">{p.strip()}</p>'
-        for p in texto.split("\n") if p.strip()
-    )
+    conteudo = _md_to_html(texto)
     return f"""
-    <div style="background:white;border-radius:12px;padding:28px 32px;
+    <div style="background:#F0F3F7;border-radius:12px;padding:28px 32px;
                 border-left:4px solid {OURO};
                 box-shadow:0 1px 3px rgba(10,37,64,0.06),0 2px 8px rgba(10,37,64,0.04);">
         <div style="font-size:0.70rem;color:#8A96A8;font-weight:700;
                     letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;">
             Diagnóstico &nbsp;·&nbsp; IA
         </div>
-        <div style="font-size:0.95rem;">{paragrafos}</div>
+        <div style="font-size:0.95rem;">{conteudo}</div>
     </div>
     """
 
