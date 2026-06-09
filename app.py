@@ -294,7 +294,7 @@ def fonte_caption() -> str:
 
 _OPCOES_PILLS = {
     "Simples":     {"nivel": 1, "cor": "#2D9B72", "slug": "simples"},
-    "Equilibrada": {"nivel": 2, "cor": "#400a0a", "slug": "equilibrada"},
+    "Equilibrada": {"nivel": 2, "cor": "#C9912A", "slug": "equilibrada"},
     "Técnica":     {"nivel": 3, "cor": "#7C3AED", "slug": "tecnica"},
 }
 
