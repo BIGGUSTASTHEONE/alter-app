@@ -298,8 +298,15 @@ def card_racio(r: dict) -> str:
     """
 
 
+def _flat(html: str) -> str:
+    """Colapsa o HTML numa única linha (sem linhas em branco).
+    O markdown do Streamlit parte um bloco HTML quando encontra uma linha
+    vazia — ao juntar cards isso acontecia e o resto era mostrado como código."""
+    return "".join(linha.strip() for linha in html.splitlines())
+
+
 def cards_grid(racios: list) -> str:
-    cards = "".join(card_racio(r) for r in racios)
+    cards = "".join(_flat(card_racio(r)) for r in racios)
     return f'<div class="alter-cards">{cards}</div>'
 
 
