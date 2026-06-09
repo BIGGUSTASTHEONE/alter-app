@@ -368,9 +368,12 @@ def fonte_caption() -> str:
 # ---------------------------------------------------------------------------
 
 _OPCOES_PILLS = {
-    "Simples":     {"nivel": 1, "cor": "#2D9B72", "slug": "simples"},
-    "Equilibrada": {"nivel": 2, "cor": "#C9912A", "slug": "equilibrada"},
-    "Técnica":     {"nivel": 3, "cor": "#7C3AED", "slug": "tecnica"},
+    "Simples":     {"nivel": 1, "slug": "simples",
+                    "desc": "Linguagem do dia-a-dia, sem jargão — para quem não trabalha com finanças."},
+    "Equilibrada": {"nivel": 2, "slug": "equilibrada",
+                    "desc": "Alguns termos financeiros, sempre explicados — para gestores e empresários."},
+    "Técnica":     {"nivel": 3, "slug": "tecnica",
+                    "desc": "Terminologia SNC completa, sem explicar os conceitos — para analistas e contabilistas."},
 }
 
 
@@ -387,29 +390,32 @@ def nivel_pills_selector(key: str = "nivel_pills", default: str = "Equilibrada")
     current = st.session_state[key]
 
     st.markdown(
-        '<div style="color:#8BAAC4;font-weight:600;font-size:0.80rem;'
-        'letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.5rem;">'
-        'Nível de linguagem</div>',
+        f'<div style="color:#8BAAC4;font-weight:600;font-size:0.80rem;'
+        f'letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.25rem;">'
+        f'Nível de linguagem</div>'
+        f'<div style="color:{TXT_MUTE};font-size:0.78rem;line-height:1.5;margin-bottom:0.7rem;">'
+        f'A mesma análise em todos os níveis — muda só o estilo da explicação, '
+        f'não a profundidade nem o rigor.</div>',
         unsafe_allow_html=True,
     )
 
-    # CSS gerado por Python com base no estado actual — sem rastrear estado em CSS
+    # CSS gerado por Python com base no estado actual — sem rastrear estado em CSS.
+    # Acento único (ciano) para todos: é um espetro de estilo, não uma escala de qualidade.
     css_parts = []
     for nome, cfg in _OPCOES_PILLS.items():
         btn_key = f"{key}_{cfg['slug']}"
-        cor = cfg["cor"]
         if nome == current:
             style = (
-                f"background:{cor} !important;"
-                f"color:#fff !important;"
-                f"border:1px solid {cor} !important;"
-                f"box-shadow:0 0 12px {cor}50 !important;"
+                f"background:{CIANO} !important;"
+                f"color:#07263C !important;"
+                f"border:1px solid {CIANO} !important;"
+                f"box-shadow:0 0 16px rgba(65,195,224,0.45) !important;"
             )
         else:
             style = (
-                "background:rgba(255,255,255,0.07) !important;"
-                "color:rgba(255,255,255,0.38) !important;"
-                "border:1px solid rgba(255,255,255,0.16) !important;"
+                "background:rgba(255,255,255,0.05) !important;"
+                "color:rgba(255,255,255,0.45) !important;"
+                "border:1px solid rgba(255,255,255,0.14) !important;"
                 "box-shadow:none !important;"
             )
         # .st-key-{btn_key} .stButton > button — especificidade (0,2,1) > (0,1,1) do CSS global
@@ -432,6 +438,20 @@ def nivel_pills_selector(key: str = "nivel_pills", default: str = "Equilibrada")
             if st.button(nome, key=f"{key}_{cfg['slug']}", use_container_width=True):
                 st.session_state[key] = nome
                 st.rerun()
+
+    # Eixo do espetro + descrição do nível seleccionado
+    st.markdown(
+        f'<div style="display:flex;justify-content:space-between;font-size:0.64rem;'
+        f'color:{TXT_MUTE};text-transform:uppercase;letter-spacing:0.06em;'
+        f'margin-top:0.55rem;">'
+        f'<span>&larr; Mais acessível</span><span>Mais técnica &rarr;</span></div>'
+        f'<div style="margin-top:0.7rem;padding:11px 15px;border-radius:12px;'
+        f'background:rgba(65,195,224,0.07);border:1px solid rgba(65,195,224,0.18);'
+        f'font-size:0.84rem;color:{TXT_DIM};line-height:1.55;">'
+        f'<strong style="color:{TXT};">{current}.</strong> '
+        f'{_OPCOES_PILLS[current]["desc"]}</div>',
+        unsafe_allow_html=True,
+    )
 
     return current
 
@@ -477,17 +497,15 @@ st.markdown(CSS, unsafe_allow_html=True)
 # Cabeçalho
 st.markdown(f"""
 <div style="padding:1.8rem 0 1.4rem;border-bottom:1px solid rgba(65,195,224,0.22);margin-bottom:0.5rem;">
-    <div style="display:flex;align-items:center;gap:13px;">
-        <div style="font-size:2.3rem;font-weight:800;letter-spacing:-0.035em;line-height:1;
-                    background:linear-gradient(110deg,#FFFFFF 10%,{CIANO} 90%);
-                    -webkit-background-clip:text;background-clip:text;
-                    -webkit-text-fill-color:transparent;color:transparent;">
-            ALTER
-        </div>
-        <div style="color:{CIANO};font-size:1.35rem;line-height:1;
-                    filter:drop-shadow(0 0 9px {CIANO});">◆</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-size:2.35rem;font-weight:800;letter-spacing:0.10em;line-height:1;
+                    color:#FFFFFF;">ALTER</div>
+        <div style="color:{CIANO};font-size:0.85rem;line-height:1;
+                    filter:drop-shadow(0 0 8px {CIANO});">◆</div>
     </div>
-    <div style="font-size:0.9rem;color:{TXT_DIM};margin-top:0.5rem;letter-spacing:0.01em;">
+    <div style="width:52px;height:3px;border-radius:3px;margin-top:0.6rem;
+                background:{CIANO};box-shadow:0 0 14px rgba(65,195,224,0.7);"></div>
+    <div style="font-size:0.9rem;color:{TXT_DIM};margin-top:0.7rem;letter-spacing:0.01em;">
         Análise financeira inteligente — uma segunda opinião, sempre disponível.
     </div>
 </div>
