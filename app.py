@@ -202,6 +202,17 @@ hr {{
 .stAlert {{
     border-radius: 10px !important;
 }}
+
+/* Grelha de cards de resultados — 2x2, colapsa para 1 coluna no telemóvel */
+.alter-cards {{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 18px !important;
+    margin-bottom: 1.1rem !important;
+}}
+@media (max-width: 640px) {{
+    .alter-cards {{ grid-template-columns: 1fr !important; }}
+}}
 </style>
 """
 
@@ -249,36 +260,36 @@ def card_racio(r: dict) -> str:
         if r.get("ref_geral") else ""
     )
     return f"""
-    <div style="position:relative;overflow:hidden;border-radius:18px;
-                padding:22px 24px 20px;{_GLASS}">
+    <div style="position:relative;overflow:hidden;border-radius:20px;
+                padding:30px 32px 26px;{_GLASS}">
         <div style="position:absolute;top:0;left:0;right:0;height:3px;
                     background:linear-gradient(90deg,{cor},transparent 75%);
                     box-shadow:0 0 14px {cor}99;"></div>
-        <div style="font-size:0.68rem;color:{TXT_DIM};font-weight:700;
-                    letter-spacing:0.10em;text-transform:uppercase;margin-bottom:10px;">
+        <div style="font-size:0.74rem;color:{TXT_DIM};font-weight:700;
+                    letter-spacing:0.10em;text-transform:uppercase;margin-bottom:12px;">
             {r['racio']}
         </div>
-        <div style="font-size:2.7rem;font-weight:800;color:{TXT};
-                    line-height:1;letter-spacing:-0.02em;margin-bottom:6px;
+        <div style="font-size:3.4rem;font-weight:800;color:{TXT};
+                    line-height:1;letter-spacing:-0.02em;margin-bottom:8px;
                     text-shadow:0 0 26px rgba(65,195,224,0.30);">
             {r['valor']}
         </div>
-        <div style="font-size:0.70rem;color:{TXT_MUTE};margin-bottom:14px;font-style:italic;">
+        <div style="font-size:0.74rem;color:{TXT_MUTE};margin-bottom:18px;font-style:italic;">
             {r['formula']}
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;">
             <span style="background:{cor}22;color:{cor};border:1px solid {cor}55;
-                         padding:4px 11px;border-radius:20px;font-size:0.70rem;
+                         padding:5px 13px;border-radius:20px;font-size:0.74rem;
                          font-weight:700;letter-spacing:0.04em;">
                 {label.upper()}
             </span>
-            <span style="font-size:0.84rem;color:{TXT_DIM};">
-                top <strong style="color:{TXT};font-size:1.18rem;">{top}%</strong>
+            <span style="font-size:0.9rem;color:{TXT_DIM};">
+                top <strong style="color:{TXT};font-size:1.32rem;">{top}%</strong>
             </span>
         </div>
         <div style="background:rgba(255,255,255,0.08);border-radius:6px;
-                    height:6px;margin-top:13px;overflow:hidden;">
-            <div style="width:{pct}%;height:6px;border-radius:6px;
+                    height:7px;margin-top:16px;overflow:hidden;">
+            <div style="width:{pct}%;height:7px;border-radius:6px;
                         background:linear-gradient(90deg,{cor},{cor}AA);
                         box-shadow:0 0 12px {cor}99;"></div>
         </div>
@@ -289,10 +300,26 @@ def card_racio(r: dict) -> str:
 
 def cards_grid(racios: list) -> str:
     cards = "".join(card_racio(r) for r in racios)
+    return f'<div class="alter-cards">{cards}</div>'
+
+
+def legenda_percentil() -> str:
     return f"""
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-                gap:16px;margin-bottom:2rem;">
-        {cards}
+    <div style="display:flex;gap:12px;align-items:flex-start;margin:0 0 2rem;
+                padding:14px 18px;border-radius:14px;
+                background:rgba(65,195,224,0.06);border:1px solid rgba(65,195,224,0.16);">
+        <div style="flex:none;width:21px;height:21px;border-radius:50%;
+                    background:{CIANO}26;border:1px solid {CIANO}66;color:{CIANO};
+                    font-size:0.78rem;font-weight:800;line-height:21px;
+                    text-align:center;font-style:italic;">i</div>
+        <div style="font-size:0.82rem;color:{TXT_DIM};line-height:1.6;">
+            <strong style="color:{TXT};">Como ler o "top X%":</strong>
+            indica o posicionamento da empresa neste rácio face às empresas do
+            mesmo setor e dimensão (dados SABI). Por exemplo,
+            <strong style="color:{TXT};">top&nbsp;17%</strong> quer dizer que está
+            entre as 17% melhores — ou seja, supera 83% das empresas.
+            <strong style="color:{TXT};">Quanto menor a percentagem, melhor o posicionamento.</strong>
+        </div>
     </div>
     """
 
@@ -659,5 +686,6 @@ if st.session_state.get("resultados"):
     st.divider()
     st.markdown(step_header("Resultados"), unsafe_allow_html=True)
     st.markdown(cards_grid(res["racios"]), unsafe_allow_html=True)
+    st.markdown(legenda_percentil(), unsafe_allow_html=True)
     st.markdown(diagnostico_card(res["diagnostico"]), unsafe_allow_html=True)
     st.markdown(fonte_caption(), unsafe_allow_html=True)
