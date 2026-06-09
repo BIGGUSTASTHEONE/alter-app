@@ -267,16 +267,16 @@ def _md_to_html(texto: str) -> str:
         if not s:
             continue
         if s.startswith("### "):
-            s = f'<h4 style="margin:1.1em 0 0.3em;color:{NAVY};font-size:1.05rem;font-weight:700;">{s[4:]}</h4>'
+            s = f'<h4 style="margin:1.1em 0 0.3em;color:{NAVY};font-size:1.18rem;font-weight:700;">{s[4:]}</h4>'
         elif s.startswith("## "):
-            s = f'<h3 style="margin:1.2em 0 0.4em;color:{NAVY};font-size:1.18rem;font-weight:700;">{s[3:]}</h3>'
+            s = f'<h3 style="margin:1.2em 0 0.4em;color:{NAVY};font-size:1.32rem;font-weight:700;">{s[3:]}</h3>'
         elif s.startswith("# "):
-            s = f'<h2 style="margin:0 0 0.5em;color:{NAVY};font-size:1.35rem;font-weight:800;">{s[2:]}</h2>'
+            s = f'<h2 style="margin:0 0 0.5em;color:{NAVY};font-size:1.55rem;font-weight:800;">{s[2:]}</h2>'
         elif s == "---":
             s = f'<hr style="border:none;border-top:1px solid #D1D9E6;margin:0.8em 0;">'
         else:
             s = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', s)
-            s = f'<p style="margin:0 0 0.85em 0;color:{NAVY};font-size:1.05rem;line-height:1.78;">{s}</p>'
+            s = f'<p style="margin:0 0 0.85em 0;color:{NAVY};font-size:1.15rem;line-height:1.78;">{s}</p>'
         html_parts.append(s)
     return "".join(html_parts)
 
@@ -291,7 +291,7 @@ def diagnostico_card(texto: str) -> str:
                     letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;">
             Diagnóstico &nbsp;·&nbsp; IA
         </div>
-        <div style="font-size:1.05rem;">{conteudo}</div>
+        <div style="font-size:1.15rem;">{conteudo}</div>
     </div>
     """
 
