@@ -3,17 +3,14 @@ app.py
 Interface da aplicação Alter (Streamlit) e orquestração do fluxo.
 
 Fluxo:
-  0. Contexto: setor de atividade, dimensão e nível de linguagem.
-  1. Entrada: upload do PDF.
-  2. Extração: a IA lê o documento e propõe os dados.
+  1. Contexto: setor de atividade, dimensão e nível de linguagem.
+  2. Entrada: upload do PDF.
   3. Confirmação: o utilizador vê e corrige os dados antes de avançar.
-  4. Análise: tabs por categoria (Liquidez / Solvabilidade).
-  5. Diagnóstico em linguagem natural pela IA, contextualizado pelo setor.
+  4. Resultados: cards de posicionamento sectorial + diagnóstico IA.
 """
 
 import os
 import streamlit as st
-import pandas as pd
 from anthropic import Anthropic
 from dotenv import load_dotenv
 
@@ -59,6 +56,226 @@ NIVEIS_LINGUAGEM = {
     ),
 }
 
+# ---------------------------------------------------------------------------
+# SISTEMA DE DESIGN
+# ---------------------------------------------------------------------------
+
+NAVY    = "#0A2540"
+AZUL    = "#1D6FA4"
+OURO    = "#C9912A"
+BG      = "#F7F9FC"
+VERDE   = "#1A7A4A"
+AMBAR   = "#B45309"
+VERMELHO = "#B91C1C"
+
+CSS = f"""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body, .stApp {{
+    background-color: {BG} !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}}
+
+.block-container {{
+    padding-top: 1.5rem !important;
+    padding-bottom: 3rem !important;
+    max-width: 900px !important;
+}}
+
+#MainMenu, footer, header {{ visibility: hidden; }}
+
+/* Botões */
+.stButton > button {{
+    background-color: {NAVY} !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.55rem 2rem !important;
+    font-weight: 600 !important;
+    font-size: 0.92rem !important;
+    letter-spacing: 0.02em !important;
+    box-shadow: 0 2px 8px rgba(10,37,64,0.18) !important;
+    transition: all 0.18s !important;
+}}
+.stButton > button:hover {{
+    background-color: {AZUL} !important;
+    box-shadow: 0 4px 14px rgba(29,111,164,0.28) !important;
+    transform: translateY(-1px);
+}}
+.stButton > button:active {{
+    transform: translateY(0px) !important;
+}}
+
+/* Labels */
+.stSelectbox label,
+.stSlider label,
+.stNumberInput label,
+.stFileUploader label {{
+    color: {NAVY} !important;
+    font-weight: 600 !important;
+    font-size: 0.80rem !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+}}
+
+/* Inputs */
+.stNumberInput > div > div > input {{
+    border-radius: 8px !important;
+    border: 1px solid #CBD5E0 !important;
+    background: white !important;
+}}
+.stNumberInput > div > div > input:focus {{
+    border-color: {AZUL} !important;
+    box-shadow: 0 0 0 2px rgba(29,111,164,0.15) !important;
+}}
+
+/* Selectbox */
+.stSelectbox > div > div {{
+    border-radius: 8px !important;
+    border: 1px solid #CBD5E0 !important;
+    background: white !important;
+}}
+
+/* Divider */
+hr {{
+    border: none !important;
+    border-top: 1px solid #E2E8F0 !important;
+    margin: 1.8rem 0 !important;
+}}
+
+/* Expander */
+.streamlit-expanderHeader {{
+    color: {AZUL} !important;
+    font-weight: 600 !important;
+    font-size: 0.88rem !important;
+}}
+
+/* Caption */
+.stCaption {{
+    color: #8A96A8 !important;
+    font-size: 0.83rem !important;
+}}
+
+/* Info / Error */
+.stAlert {{
+    border-radius: 10px !important;
+}}
+</style>
+"""
+
+
+# ---------------------------------------------------------------------------
+# COMPONENTES HTML
+# ---------------------------------------------------------------------------
+
+def step_header(n: int, titulo: str) -> str:
+    return f"""
+    <div style="display:flex;align-items:center;gap:12px;margin:2rem 0 1.2rem;">
+        <div style="width:30px;height:30px;background:{NAVY};color:{OURO};
+                    border-radius:7px;display:flex;align-items:center;justify-content:center;
+                    font-weight:800;font-size:0.82rem;flex-shrink:0;">{n}</div>
+        <div style="font-size:1.05rem;font-weight:700;color:{NAVY};
+                    letter-spacing:-0.01em;">{titulo}</div>
+    </div>
+    """
+
+
+def _cor_avaliacao(avaliacao: str) -> str:
+    return {
+        "confortável":    VERDE,
+        "dentro da norma": AMBAR,
+        "abaixo da norma": VERMELHO,
+    }.get(avaliacao, NAVY)
+
+
+def _label_avaliacao(avaliacao: str) -> str:
+    return {
+        "confortável":    "Confortável",
+        "dentro da norma": "Dentro da norma",
+        "abaixo da norma": "Abaixo da norma",
+    }.get(avaliacao, avaliacao.title())
+
+
+def card_racio(r: dict) -> str:
+    cor   = _cor_avaliacao(r["avaliacao"])
+    label = _label_avaliacao(r["avaliacao"])
+    pct   = r["percentil"]
+    return f"""
+    <div style="background:white;border-radius:12px;padding:22px 24px 18px;
+                border-top:4px solid {cor};
+                box-shadow:0 1px 3px rgba(10,37,64,0.06),0 2px 8px rgba(10,37,64,0.04);">
+        <div style="font-size:0.70rem;color:#8A96A8;font-weight:700;
+                    letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">
+            {r['racio']}
+        </div>
+        <div style="font-size:2.4rem;font-weight:800;color:{NAVY};
+                    line-height:1;letter-spacing:-0.02em;margin-bottom:6px;">
+            {r['valor']}
+        </div>
+        <div style="font-size:0.72rem;color:#A0AEC0;margin-bottom:12px;font-style:italic;">
+            {r['formula']}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="background:{cor}18;color:{cor};border:1px solid {cor}40;
+                         padding:3px 10px;border-radius:20px;font-size:0.73rem;
+                         font-weight:700;letter-spacing:0.03em;">
+                {label.upper()}
+            </span>
+            <span style="font-size:0.78rem;color:#8A96A8;">
+                top <strong style="color:{NAVY};font-size:0.90rem;">{pct}%</strong>
+            </span>
+        </div>
+        <div style="background:#EEF2F7;border-radius:4px;height:3px;margin-top:10px;">
+            <div style="width:{pct}%;background:{cor};height:3px;border-radius:4px;"></div>
+        </div>
+    </div>
+    """
+
+
+def cards_grid(racios: list) -> str:
+    cards = "".join(card_racio(r) for r in racios)
+    return f"""
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);
+                gap:14px;margin-bottom:2rem;">
+        {cards}
+    </div>
+    """
+
+
+def diagnostico_card(texto: str) -> str:
+    paragrafos = "".join(
+        f'<p style="margin:0 0 0.85em 0;color:{NAVY};line-height:1.78;">{p.strip()}</p>'
+        for p in texto.split("\n") if p.strip()
+    )
+    return f"""
+    <div style="background:white;border-radius:12px;padding:28px 32px;
+                border-left:4px solid {OURO};
+                box-shadow:0 1px 3px rgba(10,37,64,0.06),0 2px 8px rgba(10,37,64,0.04);">
+        <div style="font-size:0.70rem;color:#8A96A8;font-weight:700;
+                    letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px;">
+            Diagnóstico &nbsp;·&nbsp; IA
+        </div>
+        <div style="font-size:0.95rem;">{paragrafos}</div>
+    </div>
+    """
+
+
+def fonte_caption() -> str:
+    return f"""
+    <div style="margin-top:1.8rem;padding-top:1rem;border-top:1px solid #E2E8F0;
+                font-size:0.70rem;color:#B0BAC8;line-height:1.6;">
+        Dados comparativos: {FONTE['nome']} &nbsp;&middot;&nbsp;
+        Dados de {FONTE['ano_dados']} &nbsp;&middot;&nbsp;
+        Consultado em {FONTE['data_consulta']} &nbsp;&middot;&nbsp;
+        {FONTE['url']}
+    </div>
+    """
+
+
+# ---------------------------------------------------------------------------
+# DIAGNÓSTICO
+# ---------------------------------------------------------------------------
 
 def gerar_diagnostico(racios, categoria, setor, dimensao, nivel_linguagem):
     _, instrucao_linguagem = NIVEIS_LINGUAGEM[nivel_linguagem]
@@ -87,22 +304,33 @@ def gerar_diagnostico(racios, categoria, setor, dimensao, nivel_linguagem):
     return resposta.content[0].text.strip()
 
 
-
 # ---------------------------------------------------------------------------
 # INTERFACE
 # ---------------------------------------------------------------------------
 
-st.set_page_config(page_title="Alter", page_icon="📊")
-st.title("Alter")
-st.caption("Análise financeira inteligente. Uma segunda opinião, sempre disponível.")
+st.set_page_config(page_title="Alter", page_icon="◆", layout="centered")
+st.markdown(CSS, unsafe_allow_html=True)
+
+# Cabeçalho
+st.markdown(f"""
+<div style="padding:1.5rem 0 1.2rem;border-bottom:2px solid {OURO};margin-bottom:0.5rem;">
+    <div style="font-size:1.9rem;font-weight:800;color:{NAVY};
+                letter-spacing:-0.03em;line-height:1;">
+        ALTER
+    </div>
+    <div style="font-size:0.88rem;color:#6B7A8D;margin-top:0.4rem;letter-spacing:0.01em;">
+        Análise financeira inteligente — uma segunda opinião, sempre disponível.
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 if "dados_extraidos" not in st.session_state:
     st.session_state.dados_extraidos = None
 if "texto_pdf" not in st.session_state:
     st.session_state.texto_pdf = None
 
-# --- Passo 0: contexto ---
-st.header("0. Contexto da empresa")
+# --- Passo 1: contexto ---
+st.markdown(step_header(1, "Contexto da empresa"), unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 with col1:
     setor = st.selectbox(
@@ -124,36 +352,34 @@ with col2:
         key="dimensao",
         help=(
             "Classificação EU/Portugal — basta cumprir dois dos três critérios:\n\n"
-            "**Micro** — < 10 trabalhadores · volume de negócios ≤ 2 M€ · balanço ≤ 2 M€\n\n"
-            "**Pequena** — < 50 trabalhadores · volume de negócios ≤ 10 M€ · balanço ≤ 10 M€\n\n"
-            "**Média** — < 250 trabalhadores · volume de negócios ≤ 50 M€ · balanço ≤ 43 M€\n\n"
-            "**Grande** — ≥ 250 trabalhadores ou volume de negócios > 50 M€ ou balanço > 43 M€"
+            "**Micro** — < 10 trabalhadores · VN ≤ 2 M€ · balanço ≤ 2 M€\n\n"
+            "**Pequena** — < 50 trabalhadores · VN ≤ 10 M€ · balanço ≤ 10 M€\n\n"
+            "**Média** — < 250 trabalhadores · VN ≤ 50 M€ · balanço ≤ 43 M€\n\n"
+            "**Grande** — ≥ 250 trabalhadores ou VN > 50 M€ ou balanço > 43 M€"
         ),
     )
 with col3:
     nivel_linguagem = st.select_slider(
-        "Nível de linguagem do diagnóstico",
+        "Nível de linguagem",
         options=[1, 2, 3],
         value=2,
         format_func=lambda x: NIVEIS_LINGUAGEM[x][0],
         key="nivel_linguagem",
         help=(
-            "**Simples** — linguagem acessível, sem jargão. "
-            "Ideal para o dono do negócio sem formação financeira.\n\n"
-            "**Equilibrada** — alguma terminologia financeira. "
-            "Adequada a um gestor com conhecimentos básicos.\n\n"
-            "**Técnica** — linguagem de especialista. "
-            "Adequada a analistas financeiros e contabilistas."
+            "**Simples** — linguagem acessível, sem jargão.\n\n"
+            "**Equilibrada** — alguma terminologia financeira.\n\n"
+            "**Técnica** — linguagem de especialista (analistas, contabilistas)."
         ),
     )
 
 st.divider()
 
-# --- Passo 1: entrada ---
-st.header("1. Carregar balanço (PDF)")
-ficheiro = st.file_uploader("Escolhe o PDF do balanço", type="pdf")
+# --- Passo 2: upload ---
+st.markdown(step_header(2, "Carregar balanço (PDF)"), unsafe_allow_html=True)
+ficheiro = st.file_uploader(
+    "Escolhe o PDF do balanço", type="pdf", label_visibility="collapsed"
+)
 
-# --- Passo 2: extração ---
 if ficheiro is not None:
     if st.button("Extrair dados do balanço"):
         with st.spinner("A ler o documento e a extrair os dados..."):
@@ -166,31 +392,43 @@ if ficheiro is not None:
 
     if st.session_state.dados_extraidos is not None:
         if st.session_state.texto_pdf:
-            with st.expander("Ver texto extraído do PDF (para diagnóstico)"):
+            with st.expander("Ver texto extraído do PDF"):
                 st.text(st.session_state.texto_pdf[:3000])
         else:
             st.info("PDF digitalizado — dados extraídos por visão computacional.")
 
 # --- Passo 3: confirmação ---
 if st.session_state.dados_extraidos is not None:
-    st.header("2. Confirmar os dados")
-    st.write(
-        "Verifica os valores que a IA extraiu e corrige o que for preciso "
-        "antes de avançar."
+    st.divider()
+    st.markdown(step_header(3, "Confirmar os dados"), unsafe_allow_html=True)
+    st.caption(
+        "Verifica os valores que a IA extraiu e corrige o que for preciso antes de avançar."
     )
     d = st.session_state.dados_extraidos
 
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("Ativo")
+        st.markdown(
+            f"<div style='font-size:0.78rem;font-weight:700;color:{NAVY};"
+            f"letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.6rem;"
+            f"margin-top:0.4rem;'>Ativo</div>",
+            unsafe_allow_html=True,
+        )
         ac    = st.number_input("Ativo Corrente",    value=float(d.get("ativo_corrente")    or 0.0))
         inv   = st.number_input("Inventários",       value=float(d.get("inventarios")       or 0.0))
         caixa = st.number_input("Caixa e Depósitos", value=float(d.get("caixa_e_depositos") or 0.0))
     with col2:
-        st.subheader("Passivo e Capital")
-        pc    = st.number_input("Passivo Corrente",      value=float(d.get("passivo_corrente")     or 0.0))
-        pnc   = st.number_input("Passivo Não Corrente",  value=float(d.get("passivo_nao_corrente") or 0.0))
-        cp    = st.number_input("Capital Próprio",       value=float(d.get("capital_proprio")      or 0.0))
+        st.markdown(
+            f"<div style='font-size:0.78rem;font-weight:700;color:{NAVY};"
+            f"letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.6rem;"
+            f"margin-top:0.4rem;'>Passivo e Capital</div>",
+            unsafe_allow_html=True,
+        )
+        pc  = st.number_input("Passivo Corrente",     value=float(d.get("passivo_corrente")     or 0.0))
+        pnc = st.number_input("Passivo Não Corrente", value=float(d.get("passivo_nao_corrente") or 0.0))
+        cp  = st.number_input("Capital Próprio",      value=float(d.get("capital_proprio")      or 0.0))
+
+    st.markdown("<div style='margin-top:1rem;'></div>", unsafe_allow_html=True)
 
     # --- Passo 4: análise ---
     if st.button("Analisar"):
@@ -203,39 +441,34 @@ if st.session_state.dados_extraidos is not None:
             for e in erros:
                 st.error(e)
         else:
-            racios_liq  = liquidez.analisar_liquidez(
-                {"ativo_corrente": ac, "passivo_corrente": pc,
-                 "inventarios": inv, "caixa_e_depositos": caixa},
+            racios_liq = liquidez.analisar_liquidez(
+                {
+                    "ativo_corrente":   ac,
+                    "passivo_corrente": pc,
+                    "inventarios":      inv,
+                    "caixa_e_depositos": caixa,
+                },
                 setor, dimensao,
             )
             racios_solv = solvabilidade.analisar_solvabilidade(
-                {"capital_proprio": cp, "passivo_corrente": pc,
-                 "passivo_nao_corrente": pnc},
+                {
+                    "capital_proprio":      cp,
+                    "passivo_corrente":     pc,
+                    "passivo_nao_corrente": pnc,
+                },
                 setor, dimensao,
             )
             todos_racios = racios_liq + racios_solv
 
-            st.header("3. Resultados")
-            tabela = pd.DataFrame(todos_racios)
-            tabela.columns = ["Rácio", "Fórmula", "Valor", "Avaliação", "Percentil no setor"]
-            tabela["Percentil no setor"] = tabela["Percentil no setor"].apply(
-                lambda p: f"melhor que {p}%"
-            )
-            st.table(tabela)
-
-            st.subheader("Comparação visual")
-            grafico = pd.DataFrame({r["racio"]: [r["valor"]] for r in todos_racios}).T
-            grafico.columns = ["Valor"]
-            st.bar_chart(grafico)
-
-            st.subheader("Diagnóstico")
-            with st.spinner("A gerar o diagnóstico..."):
-                st.write(gerar_diagnostico(todos_racios, "Liquidez e Solvabilidade", setor, dimensao, nivel_linguagem))
-
             st.divider()
-            st.caption(
-                f"Dados comparativos: {FONTE['nome']} · "
-                f"Dados de {FONTE['ano_dados']} · "
-                f"Consultado em {FONTE['data_consulta']} · "
-                f"{FONTE['url']}"
-            )
+            st.markdown(step_header(4, "Resultados"), unsafe_allow_html=True)
+            st.markdown(cards_grid(todos_racios), unsafe_allow_html=True)
+
+            with st.spinner("A gerar o diagnóstico..."):
+                texto_diag = gerar_diagnostico(
+                    todos_racios,
+                    "Liquidez e Solvabilidade",
+                    setor, dimensao, nivel_linguagem,
+                )
+            st.markdown(diagnostico_card(texto_diag), unsafe_allow_html=True)
+            st.markdown(fonte_caption(), unsafe_allow_html=True)
