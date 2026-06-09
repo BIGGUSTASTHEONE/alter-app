@@ -111,37 +111,37 @@ hr {{
     margin: 1.8rem 0 !important;
 }}
 
-/* === Pills do nível de linguagem === */
-/* Inativo: subtil, distinguível do fundo mas neutro */
-[data-testid="stPills"] button,
-[data-testid="stPillsInput"] button {{
+/* === Pills do nível de linguagem — via atributos semânticos === */
+/* Inativo */
+[role="radiogroup"] button, [role="group"] button {{
     font-size: 0.76rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.04em !important;
     text-transform: uppercase !important;
-    border-radius: 8px !important;
-    padding: 6px 10px !important;
     transition: all 0.18s !important;
-    background: rgba(255,255,255,0.09) !important;
-    color: rgba(255,255,255,0.40) !important;
-    border: 1px solid rgba(255,255,255,0.18) !important;
+    background: rgba(255,255,255,0.07) !important;
+    color: rgba(255,255,255,0.38) !important;
+    border: 1px solid rgba(255,255,255,0.16) !important;
 }}
-/* Ativo: cor específica por posição */
-[data-testid="stPills"] button[aria-pressed="true"]:nth-child(1),
-[data-testid="stPillsInput"] button[aria-pressed="true"]:nth-child(1) {{
-    background: #2D9B72 !important; color: white !important;
+/* Ativo: cor por posição */
+[role="radiogroup"] button[aria-pressed="true"]:nth-child(1),
+[role="group"] button[aria-pressed="true"]:nth-child(1) {{
+    background: #2D9B72 !important;
+    color: white !important;
     border-color: #2D9B72 !important;
     box-shadow: 0 0 12px #2D9B7250 !important;
 }}
-[data-testid="stPills"] button[aria-pressed="true"]:nth-child(2),
-[data-testid="stPillsInput"] button[aria-pressed="true"]:nth-child(2) {{
-    background: {OURO} !important; color: white !important;
+[role="radiogroup"] button[aria-pressed="true"]:nth-child(2),
+[role="group"] button[aria-pressed="true"]:nth-child(2) {{
+    background: {OURO} !important;
+    color: white !important;
     border-color: {OURO} !important;
     box-shadow: 0 0 12px {OURO}50 !important;
 }}
-[data-testid="stPills"] button[aria-pressed="true"]:nth-child(3),
-[data-testid="stPillsInput"] button[aria-pressed="true"]:nth-child(3) {{
-    background: #7C3AED !important; color: white !important;
+[role="radiogroup"] button[aria-pressed="true"]:nth-child(3),
+[role="group"] button[aria-pressed="true"]:nth-child(3) {{
+    background: #7C3AED !important;
+    color: white !important;
     border-color: #7C3AED !important;
     box-shadow: 0 0 12px #7C3AED50 !important;
 }}
