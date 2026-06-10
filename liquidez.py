@@ -38,7 +38,7 @@ def calcular_liquidez_imediata(caixa_e_depositos, passivo_corrente):
 # PERCENTIL POR INTERPOLAÇÃO LINEAR
 # Dado um valor e os três quartis (P25/P50/P75), estima em que percentil
 # da distribuição o valor se encontra.
-# Não envolve IA — é math pura aplicada aos dados do Banco de Portugal.
+# Não envolve IA — é math pura aplicada aos benchmarks sectoriais (SABI).
 # ---------------------------------------------------------------------------
 
 def calcular_percentil(valor, p25, p50, p75):

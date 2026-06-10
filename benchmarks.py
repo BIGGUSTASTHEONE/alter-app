@@ -25,13 +25,17 @@ FONTE = {
 
 # ---------------------------------------------------------------------------
 # FALLBACK GERAL
-# Usado quando não há dados suficientes para o setor+dimensão específico.
+# Usado quando não há dados SABI suficientes para o setor+dimensão
+# (ex.: Liquidez Imediata em todos os setores; Agricultura).
+# Valores de referência gerais da literatura financeira — não derivam do
+# SABI; a interface sinaliza o fallback através de e_sectorial().
 # ---------------------------------------------------------------------------
 
 BENCHMARK_GERAL = {
     "liquidez_geral":    {"p25": 0.90, "p50": 1.20, "p75": 1.65},
     "liquidez_reduzida": {"p25": 0.65, "p50": 0.90, "p75": 1.25},
     "liquidez_imediata": {"p25": 0.10, "p50": 0.20, "p75": 0.40},
+    "solvabilidade":     {"p25": 0.20, "p50": 0.40, "p75": 0.65},
 }
 
 # ---------------------------------------------------------------------------

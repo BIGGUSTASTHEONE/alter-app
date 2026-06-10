@@ -6,15 +6,13 @@ Nota de arquitetura: sem inteligência artificial — apenas operações matemá
 """
 
 import benchmarks
-from liquidez import calcular_percentil, avaliar_racio
+from liquidez import avaliar_racio
 
 DADOS_NECESSARIOS = [
     "capital_proprio",
     "passivo_corrente",
     "passivo_nao_corrente",
 ]
-
-BENCHMARK_SOLVABILIDADE_GERAL = {"p25": 0.20, "p50": 0.40, "p75": 0.65}
 
 
 def calcular_solvabilidade(capital_proprio, passivo_total):
@@ -37,10 +35,10 @@ def analisar_solvabilidade(dados, setor, dimensao):
 
     racio = calcular_solvabilidade(cp, passivo_total)
 
-    bms   = benchmarks.obter(setor, dimensao)
-    bm_sv = bms.get("solvabilidade", BENCHMARK_SOLVABILIDADE_GERAL)
+    # obter() faz merge com BENCHMARK_GERAL — a chave existe sempre.
+    bms = benchmarks.obter(setor, dimensao)
 
-    avaliacao, percentil = avaliar_racio(racio, bm_sv)
+    avaliacao, percentil = avaliar_racio(racio, bms["solvabilidade"])
 
     return [{
         "racio":     "Solvabilidade",
