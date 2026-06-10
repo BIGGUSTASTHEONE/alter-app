@@ -1,14 +1,15 @@
 # Estado do Projecto — Alter
 
-_Última actualização: 9 de junho de 2026 (rev. revisão Opus)_
+_Última actualização: 10 de junho de 2026 (rev. robustez e arquitectura)_
 
-## Mudanças desta revisão (correções e robustez)
-- **Bug corrigido — label "top X%"**: o card mostrava o percentil em vez da posição relativa. Agora mostra `top (100−percentil)%` (melhor que X% → top (100−X)%).
-- **Bug corrigido — pipeline SABI**: `classificar_dimensao` recebia vendas/activo trocados; só afetava a fronteira Média↔Grande. Benchmarks regenerados sobre as 928 463 empresas (20 entradas Grande+Média atualizadas; Micro/Pequena inalteradas, como esperado).
-- **Resultados persistentes**: cards e diagnóstico passaram para `session_state` — já não desaparecem ao mexer noutro widget (e poupam chamadas à API).
-- **Liquidez Imediata / Agricultura**: cards marcados com "referência geral" quando não há dado SABI sectorial (`benchmarks.e_sectorial`).
-- **Testes**: `tests/test_nucleo.py` — 27 testes do núcleo determinístico (rácios, percentis, avaliação, dimensão, CAE).
-- **Infra**: modelos centralizados em `config.py`; `requirements.txt` fixado e separado de `requirements-dev.txt` (pandas/openpyxl/pytest); exports SABI no `.gitignore`.
+## Mudanças desta revisão (robustez e arquitectura)
+- **Diagnóstico com tratamento de erro**: se a chamada à API falhar, a app mostra o erro e mantém os cards (os rácios são deterministas e já estão calculados); um aviso persistente convida a carregar em «Analisar» de novo. Antes, a app rebentava com o traceback cru.
+- **Visão limitada a 10 páginas** (`MAX_PAGINAS_VISAO`): PDFs digitalizados longos deixam de gerar pedidos enormes à API; a via de texto tem tecto de 150 000 caracteres (`MAX_CARACTERES_TEXTO`).
+- **Cliente da API lazy em `extracao.py`** — o módulo importa-se sem chave configurada (necessário para testar a lógica pura).
+- **`ui.py` novo**: todo o sistema de design (tokens, CSS, cabeçalho, cards, legenda, pills, inputs) saiu de `app.py`, que ficou só com a orquestração do fluxo e o prompt do diagnóstico (700 → ~260 linhas).
+- **Diagnóstico renderiza listas**: `_md_to_html` agrupa `- item` / `* item` / `1. item` em `<ul>`/`<ol>` — antes os hífenes apareciam como texto cru.
+- **Fallback de solvabilidade centralizado** em `benchmarks.BENCHMARK_GERAL` (estava à parte em `solvabilidade.py`); comentário desatualizado "Banco de Portugal" → SABI.
+- **Testes: 27 → 38** — novos `tests/test_extracao.py` (parsing do JSON, limite de páginas) e `tests/test_ui.py` (markdown→HTML do diagnóstico).
 
 ## O que está feito
 
@@ -25,10 +26,13 @@ _Última actualização: 9 de junho de 2026 (rev. revisão Opus)_
 - Avaliação e percentil face a benchmarks por setor+dimensão (interpolação linear P25/P50/P75)
 - Resultados em grelha de cards 2×2 com barra de percentil visual e badge semântico
 - Diagnóstico em linguagem natural gerado pela IA, contextualizado pelo setor
+- Resultados persistem em `session_state` — sobrevivem a reruns e poupam chamadas à API
+- Falha da API no diagnóstico não destrói a análise: cards mantêm-se, diagnóstico pode ser retentado
 
 ### Extração de PDF (robusta)
 - PDFs digitais: extração de texto com PyMuPDF
 - PDFs digitalizados (scan): fallback automático para visão computacional (Claude Vision)
+- Limites de custo: visão usa só as primeiras 10 páginas; texto limitado a 150k caracteres
 - Suporte a terminologia SNC portuguesa (Disponibilidades, Existências, Capitais próprios, etc.)
 - Expander para o utilizador ver o texto extraído
 
@@ -66,17 +70,20 @@ _Última actualização: 9 de junho de 2026 (rev. revisão Opus)_
 - Repositório GitHub: github.com/BIGGUSTASTHEONE/alter-app
 - Deploy online: Streamlit Cloud (URL activo)
 - Nota de fonte dos dados comparativos visível na interface após análise
+- Testes: 38 (`pytest`) — núcleo determinístico, lógica pura da extração, markdown do diagnóstico
+- Modelos centralizados em `config.py`; `requirements.txt` fixado (app) separado de `requirements-dev.txt` (pipeline SABI + testes)
 
 ## Decisões técnicas
 - Modelo da API: `claude-sonnet-4-6` (extração e diagnóstico)
 - Framework de interface: Streamlit
 - Leitura de PDF: PyMuPDF (fitz)
 - Arquitectura: extração (IA) → cálculo determinístico → diagnóstico (IA)
+- Separação apresentação/fluxo: `ui.py` (design system e componentes HTML) vs `app.py` (orquestração e prompt)
 - Benchmarks: SABI (928 463 empresas, junho 2026) — população completa, não amostra
 - Percentil: interpolação linear P25/P50/P75 — sem IA, só math
 - Resultados: HTML custom com CSS inline — não depende de widgets Streamlit para os cards
 - Design system: navy/ciano/semântico — filosofia "o design serve a comparação"
-- Pills: `nivel_pills_selector()` usa `st.button` + CSS `.st-key-{key}` para styling robusto (sem depender de internos React do Streamlit)
+- Pills: `ui.nivel_pills_selector()` usa `st.button` + CSS `.st-key-{key}` para styling robusto (sem depender de internos React do Streamlit)
 
 ## Próximos passos
 
