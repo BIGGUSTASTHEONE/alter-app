@@ -677,11 +677,17 @@ if st.session_state.dados_extraidos is not None:
             todos_racios = racios_liq + racios_solv
 
             with st.spinner("A gerar o diagnóstico..."):
-                texto_diag = gerar_diagnostico(
-                    todos_racios,
-                    "Liquidez e Solvabilidade",
-                    setor, dimensao, nivel_linguagem,
-                )
+                try:
+                    texto_diag = gerar_diagnostico(
+                        todos_racios,
+                        "Liquidez e Solvabilidade",
+                        setor, dimensao, nivel_linguagem,
+                    )
+                except Exception as e:
+                    # Os rácios são deterministas e já estão calculados —
+                    # mostram-se na mesma; só o diagnóstico fica por gerar.
+                    texto_diag = None
+                    st.error(f"Não foi possível gerar o diagnóstico: {e}")
 
             # Guarda em session_state para os resultados sobreviverem a reruns
             st.session_state.resultados = {
@@ -696,5 +702,11 @@ if st.session_state.get("resultados"):
     st.markdown(step_header("Resultados"), unsafe_allow_html=True)
     st.markdown(cards_grid(res["racios"]), unsafe_allow_html=True)
     st.markdown(legenda_percentil(), unsafe_allow_html=True)
-    st.markdown(diagnostico_card(res["diagnostico"]), unsafe_allow_html=True)
+    if res["diagnostico"]:
+        st.markdown(diagnostico_card(res["diagnostico"]), unsafe_allow_html=True)
+    else:
+        st.warning(
+            "O diagnóstico não foi gerado (falha na chamada à API). "
+            "Carrega em «Analisar» para tentar de novo — os rácios mantêm-se."
+        )
     st.markdown(fonte_caption(), unsafe_allow_html=True)
