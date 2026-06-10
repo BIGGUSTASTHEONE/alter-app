@@ -45,6 +45,7 @@ CSS = f"""
 
 html, body, .stApp {{
     background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%2341c3e0' stroke-width='0.7' stroke-linejoin='round' opacity='0.05'%3E%3Cpolygon points='40,26 70,56 40,86 10,56'/%3E%3Cpolygon points='62,14 92,44 62,74 32,44'/%3E%3C/g%3E%3C/svg%3E") calc(100% + 170px) -120px / 580px 580px no-repeat,
         radial-gradient(1200px 620px at 50% -12%, rgba(65,195,224,0.16), transparent 60%),
         radial-gradient(900px 500px at 100% 4%, rgba(65,195,224,0.07), transparent 55%),
         linear-gradient(180deg, #0C2C4B 0%, #08203A 42%, #061528 100%) !important;
@@ -183,19 +184,39 @@ hr {{
 # CABEÇALHO E ESTRUTURA
 # ---------------------------------------------------------------------------
 
+def simbolo_svg(tamanho: int = 60, fid: str = "gAlt") -> str:
+    """Símbolo da marca (dois losangos entrelaçados) como SVG inline.
+    `fid` tem de ser único por instância na página — ids de filtro repetidos
+    no DOM fazem o glow falhar em alguns browsers."""
+    return (
+        f'<svg width="{tamanho}" height="{tamanho}" viewBox="0 0 100 100" '
+        f'role="img" aria-label="ALTER" style="flex:none;display:block;">'
+        f'<defs><filter id="{fid}" x="-40%" y="-40%" width="180%" height="180%">'
+        f'<feGaussianBlur stdDeviation="2.2" result="b"/>'
+        f'<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>'
+        f'</filter></defs>'
+        f'<g filter="url(#{fid})">'
+        f'<polygon points="40,26 70,56 40,86 10,56" fill="{CIANO}" fill-opacity="0.14" '
+        f'stroke="{CIANO}" stroke-width="3" stroke-linejoin="round"/>'
+        f'<polygon points="62,14 92,44 62,74 32,44" fill="{CIANO}" fill-opacity="0.18" '
+        f'stroke="{CIANO}" stroke-width="3" stroke-linejoin="round"/>'
+        f'</g></svg>'
+    )
+
+
 def cabecalho() -> str:
     return f"""
-    <div style="padding:1.8rem 0 1.4rem;border-bottom:1px solid rgba(65,195,224,0.22);margin-bottom:0.5rem;">
-        <div style="display:flex;align-items:center;gap:12px;">
+    <div style="display:flex;align-items:center;gap:20px;padding:1.6rem 0 1.5rem;
+                border-bottom:1px solid rgba(65,195,224,0.22);margin-bottom:0.5rem;">
+        <div style="filter:drop-shadow(0 8px 22px rgba(65,195,224,0.30));">{simbolo_svg(70, "gAlcab")}</div>
+        <div style="display:inline-block;">
             <div style="font-size:2.35rem;font-weight:800;letter-spacing:0.10em;line-height:1;
                         color:#FFFFFF;">ALTER</div>
-            <div style="color:{CIANO};font-size:0.85rem;line-height:1;
-                        filter:drop-shadow(0 0 8px {CIANO});">◆</div>
-        </div>
-        <div style="width:52px;height:3px;border-radius:3px;margin-top:0.6rem;
-                    background:{CIANO};box-shadow:0 0 14px rgba(65,195,224,0.7);"></div>
-        <div style="font-size:0.9rem;color:{TXT_DIM};margin-top:0.7rem;letter-spacing:0.01em;">
-            Análise financeira inteligente — uma segunda opinião, sempre disponível.
+            <div style="width:100%;height:3px;border-radius:3px;margin-top:0.55rem;
+                        background:{CIANO};box-shadow:0 0 14px rgba(65,195,224,0.7);"></div>
+            <div style="font-size:0.9rem;color:{TXT_DIM};margin-top:0.65rem;letter-spacing:0.01em;">
+                Análise financeira inteligente — uma segunda opinião, sempre disponível.
+            </div>
         </div>
     </div>
     """
@@ -203,10 +224,11 @@ def cabecalho() -> str:
 
 def step_header(titulo: str) -> str:
     return f"""
-    <div style="display:flex;align-items:center;gap:13px;margin:2.2rem 0 1.2rem;">
-        <div style="width:4px;height:22px;border-radius:4px;
-                    background:linear-gradient(180deg,{CIANO},rgba(65,195,224,0.25));
-                    box-shadow:0 0 14px rgba(65,195,224,0.65);"></div>
+    <div style="display:flex;align-items:center;gap:14px;margin:2.2rem 0 1.2rem;">
+        <div style="flex:none;width:12px;height:12px;transform:rotate(45deg);
+                    border-radius:2.5px;background:rgba(65,195,224,0.16);
+                    border:2px solid {CIANO};
+                    box-shadow:0 0 12px rgba(65,195,224,0.55);"></div>
         <div style="font-size:1.08rem;font-weight:700;color:{TXT};
                     letter-spacing:-0.01em;">{titulo}</div>
     </div>
@@ -308,10 +330,13 @@ def legenda_percentil() -> str:
     <div style="display:flex;gap:12px;align-items:flex-start;margin:0 0 2rem;
                 padding:14px 18px;border-radius:14px;
                 background:rgba(65,195,224,0.06);border:1px solid rgba(65,195,224,0.16);">
-        <div style="flex:none;width:21px;height:21px;border-radius:50%;
-                    background:{CIANO}26;border:1px solid {CIANO}66;color:{CIANO};
-                    font-size:0.78rem;font-weight:800;line-height:21px;
-                    text-align:center;font-style:italic;">i</div>
+        <div style="flex:none;width:19px;height:19px;transform:rotate(45deg);
+                    border-radius:4px;background:{CIANO}26;border:1px solid {CIANO}66;
+                    margin:3px 4px 0 3px;display:flex;align-items:center;
+                    justify-content:center;">
+            <span style="transform:rotate(-45deg);color:{CIANO};font-size:0.74rem;
+                         font-weight:800;font-style:italic;line-height:1;">i</span>
+        </div>
         <div style="font-size:0.82rem;color:{TXT_DIM};line-height:1.6;">
             <strong style="color:{TXT};">Como ler o "top X%":</strong>
             indica o posicionamento da empresa neste rácio face às empresas do
@@ -414,8 +439,8 @@ def diagnostico_card(texto: str) -> str:
                     background:linear-gradient(180deg,{CIANO},transparent 80%);
                     box-shadow:0 0 16px {CIANO}99;"></div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
-            <span style="display:inline-block;width:7px;height:7px;border-radius:50%;
-                         background:{CIANO};box-shadow:0 0 10px {CIANO};"></span>
+            <span style="display:inline-block;width:8px;height:8px;transform:rotate(45deg);
+                         border-radius:1.5px;background:{CIANO};box-shadow:0 0 10px {CIANO};"></span>
             <span style="font-size:0.68rem;color:{CIANO};font-weight:700;
                          letter-spacing:0.12em;text-transform:uppercase;">
                 Diagnóstico &nbsp;·&nbsp; IA
@@ -443,12 +468,18 @@ def num_input(label: str, value: float) -> float:
 
 def fonte_caption() -> str:
     return f"""
-    <div style="margin-top:1.8rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.10);
-                font-size:0.70rem;color:{TXT_MUTE};line-height:1.6;">
-        Dados comparativos: {FONTE['nome']} &nbsp;&middot;&nbsp;
-        Dados de {FONTE['ano_dados']} &nbsp;&middot;&nbsp;
-        Consultado em {FONTE['data_consulta']} &nbsp;&middot;&nbsp;
-        {FONTE['url']}
+    <div style="margin-top:2.2rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,0.10);">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:0.55rem;">
+            {simbolo_svg(22, "gAlfoot")}
+            <span style="font-size:0.78rem;font-weight:800;letter-spacing:0.10em;
+                         color:{TXT_DIM};">ALTER</span>
+        </div>
+        <div style="font-size:0.70rem;color:{TXT_MUTE};line-height:1.6;">
+            Dados comparativos: {FONTE['nome']} &nbsp;&middot;&nbsp;
+            Dados de {FONTE['ano_dados']} &nbsp;&middot;&nbsp;
+            Consultado em {FONTE['data_consulta']} &nbsp;&middot;&nbsp;
+            {FONTE['url']}
+        </div>
     </div>
     """
 
