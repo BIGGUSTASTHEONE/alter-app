@@ -23,8 +23,8 @@ CIANO    = "#41c3e0"   # acento estrutural (luminoso sobre fundo escuro)
 TXT      = "#EAF2F8"   # texto primário sobre vidro escuro
 TXT_DIM  = "#9FB3C8"   # texto secundário
 TXT_MUTE = "#6B7E92"   # texto terciário / notas
-VERDE    = "#34E0C8"   # confortável      (aqua-turquesa, frio p/ condizer com o cian)
-AMBAR    = "#F5C84C"   # dentro da norma  (ouro frio)
+ROXO     = "#A88BFF"   # confortável      (violeta-periwinkle, frio p/ condizer com o cian)
+VERDE    = "#34D399"   # dentro da norma  (esmeralda limpo)
 VERMELHO = "#F2607E"   # abaixo da norma  (magenta-coral)
 
 # Receita de vidro reutilizada nos cards
@@ -250,8 +250,8 @@ def rotulo_coluna(texto: str) -> str:
 
 def _cor_avaliacao(avaliacao: str) -> str:
     return {
-        "confortável":    VERDE,
-        "dentro da norma": AMBAR,
+        "confortável":    ROXO,
+        "dentro da norma": VERDE,
         "abaixo da norma": VERMELHO,
     }.get(avaliacao, CIANO)
 
