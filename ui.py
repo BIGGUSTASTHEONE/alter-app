@@ -212,11 +212,14 @@ def cabecalho() -> str:
         <div style="display:inline-block;">
             <div style="font-size:2.35rem;font-weight:800;letter-spacing:0.10em;line-height:1;
                         color:#FFFFFF;
-                        text-shadow:0 0 8px rgba(255,255,255,0.45),
-                                    0 0 22px rgba(65,195,224,0.65),
-                                    0 0 42px rgba(65,195,224,0.45);">ALTER</div>
+                        text-shadow:0 0 7px rgba(255,255,255,0.35),
+                                    0 0 18px rgba(65,195,224,0.50),
+                                    0 0 34px rgba(65,195,224,0.32);">ALTER</div>
             <div style="width:100%;height:3px;border-radius:3px;margin-top:0.55rem;
-                        background:{CIANO};box-shadow:0 0 14px rgba(65,195,224,0.7);"></div>
+                        background:{CIANO};
+                        box-shadow:0 0 10px rgba(65,195,224,0.85),
+                                   0 0 22px rgba(65,195,224,0.6),
+                                   0 0 38px rgba(65,195,224,0.35);"></div>
             <div style="font-size:0.9rem;color:{TXT_DIM};margin-top:0.65rem;letter-spacing:0.01em;">
                 Análise financeira inteligente — uma segunda opinião, sempre disponível.
             </div>
