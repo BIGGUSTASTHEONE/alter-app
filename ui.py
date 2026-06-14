@@ -196,13 +196,13 @@ def simbolo_svg(tamanho: int = 60, fid: str = "gAlt") -> str:
         "@keyframes altInB_FID{0%{transform:translate(18px,-8px);opacity:0;}"
         "100%{transform:translate(0,0);opacity:1;}}"
         "@keyframes altGlow_FID{0%,55%{filter:drop-shadow(0 0 0 rgba(65,195,224,0));}"
-        "100%{filter:drop-shadow(0 0 5px rgba(65,195,224,0.7));}}"
-        "@keyframes altPulse_FID{0%,100%{filter:drop-shadow(0 0 5px rgba(65,195,224,0.7));}"
-        "50%{filter:drop-shadow(0 0 10px rgba(65,195,224,0.95));}}"
+        "100%{filter:drop-shadow(0 0 9px rgba(65,195,224,0.9));}}"
+        "@keyframes altPulse_FID{0%,100%{filter:drop-shadow(0 0 9px rgba(65,195,224,0.9));}"
+        "50%{filter:drop-shadow(0 0 1px rgba(65,195,224,0.08));}}"
         ".altA_FID{animation:altInA_FID 2.4s cubic-bezier(.25,.1,.25,1) both;}"
         ".altB_FID{animation:altInB_FID 2.4s cubic-bezier(.25,.1,.25,1) both;}"
         ".altG_FID{animation:altGlow_FID 2.6s ease-in-out both,"
-        "altPulse_FID 6s ease-in-out 2.6s infinite;}"
+        "altPulse_FID 9s ease-in-out 2.6s infinite;}"
         "@media (prefers-reduced-motion:reduce){"
         ".altA_FID,.altB_FID,.altG_FID{animation:none;}"
         ".altA_FID,.altB_FID{opacity:1;transform:none;}}"
@@ -228,15 +228,22 @@ def simbolo_svg(tamanho: int = 60, fid: str = "gAlt") -> str:
 def cabecalho() -> str:
     return f"""
     <style>
-    @keyframes alterNomePulse{{
-        0%,100%{{text-shadow:0 0 7px rgba(255,255,255,0.35),
-                             0 0 18px rgba(65,195,224,0.50),
-                             0 0 34px rgba(65,195,224,0.32);}}
-        50%{{text-shadow:0 0 9px rgba(255,255,255,0.5),
-                         0 0 24px rgba(65,195,224,0.72),
-                         0 0 46px rgba(65,195,224,0.5);}}
+    @keyframes alterNomeIn{{
+        0%{{text-shadow:none;}}
+        100%{{text-shadow:0 0 9px rgba(255,255,255,0.5),
+                          0 0 24px rgba(65,195,224,0.72),
+                          0 0 46px rgba(65,195,224,0.5);}}
     }}
-    .alter-nome{{animation:alterNomePulse 6s ease-in-out 2.6s infinite;}}
+    @keyframes alterNomePulse{{
+        0%,100%{{text-shadow:0 0 9px rgba(255,255,255,0.5),
+                             0 0 24px rgba(65,195,224,0.72),
+                             0 0 46px rgba(65,195,224,0.5);}}
+        50%{{text-shadow:0 0 3px rgba(255,255,255,0.1),
+                         0 0 7px rgba(65,195,224,0.1),
+                         0 0 14px rgba(65,195,224,0.07);}}
+    }}
+    .alter-nome{{animation:alterNomeIn 2.6s ease-in-out both,
+                          alterNomePulse 9s ease-in-out 2.6s infinite;}}
     @media (prefers-reduced-motion:reduce){{.alter-nome{{animation:none;}}}}
     </style>
     <div style="display:flex;align-items:center;gap:20px;padding:1.6rem 0 1.5rem;
@@ -246,9 +253,9 @@ def cabecalho() -> str:
             <div class="alter-nome"
                  style="font-size:2.35rem;font-weight:800;letter-spacing:0.10em;line-height:1;
                         color:#FFFFFF;
-                        text-shadow:0 0 7px rgba(255,255,255,0.35),
-                                    0 0 18px rgba(65,195,224,0.50),
-                                    0 0 34px rgba(65,195,224,0.32);">ALTER</div>
+                        text-shadow:0 0 9px rgba(255,255,255,0.5),
+                                    0 0 24px rgba(65,195,224,0.72),
+                                    0 0 46px rgba(65,195,224,0.5);">ALTER</div>
             <div style="width:100%;height:3px;border-radius:3px;margin-top:0.55rem;
                         background:{CIANO};
                         box-shadow:0 0 10px rgba(65,195,224,0.85),
