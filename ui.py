@@ -617,12 +617,19 @@ def nivel_pills_selector(key: str = "nivel_pills", default: str = "Equilibrada")
                 f"border:1px solid {CIANO} !important;"
                 f"box-shadow:0 0 16px rgba(65,195,224,0.45) !important;"
             )
+            hover = "box-shadow:0 0 24px rgba(65,195,224,0.75) !important;"
         else:
             style = (
                 "background:rgba(255,255,255,0.05) !important;"
                 "color:rgba(255,255,255,0.45) !important;"
                 "border:1px solid rgba(255,255,255,0.14) !important;"
                 "box-shadow:none !important;"
+            )
+            hover = (
+                "background:rgba(65,195,224,0.10) !important;"
+                f"color:{TXT} !important;"
+                "border-color:rgba(65,195,224,0.55) !important;"
+                "box-shadow:0 0 16px rgba(65,195,224,0.40) !important;"
             )
         # .st-key-{btn_key} .stButton > button — especificidade (0,2,1) > (0,1,1) do CSS global
         css_parts.append(
@@ -634,6 +641,9 @@ def nivel_pills_selector(key: str = "nivel_pills", default: str = "Equilibrada")
             f"letter-spacing:0.04em !important;"
             f"text-transform:uppercase !important;"
             f"transition:all 0.18s !important;}}"
+        )
+        css_parts.append(
+            f".st-key-{btn_key} .stButton > button:hover {{{hover}}}"
         )
 
     st.markdown(f"<style>{''.join(css_parts)}</style>", unsafe_allow_html=True)
