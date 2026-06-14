@@ -261,55 +261,42 @@ def cabecalho() -> str:
 
 def tela_boas_vindas() -> str:
     """Ecrã de boas-vindas (uma vez por sessão): os dois losangos surgem
-    enormes e juntam-se, com o nome ALTER em grande. No final, o símbolo voa
-    para o símbolo do cabeçalho e o nome voa para o nome do cabeçalho —
-    cada um para o seu sítio, em separado — e o overlay cruza-fade com a
-    página. Os alvos são estimados para o layout centrado do Streamlit
-    (sem JS para medir posições), por isso são afináveis pelos offsets."""
+    enormes e juntam-se, com o nome ALTER em grande e centrado. No final,
+    o conjunto encolhe ligeiramente e o overlay desvanece — um cross-dissolve
+    suave que revela o site por baixo, sem tentar alinhar com o cabeçalho
+    (por isso é sempre fluido, independente do tamanho do ecrã)."""
     return f"""
     <style>
     @keyframes bvOverlay{{
-        0%,82%{{opacity:1;}}
+        0%,68%{{opacity:1;}}
         100%{{opacity:0;visibility:hidden;}}
     }}
-    /* Símbolo: centro do ecrã -> símbolo do cabeçalho (canto sup. esq. da coluna) */
-    @keyframes bvSym{{
-        0%{{opacity:0;transform:translate(0,0) translate(-50%,-50%) scale(1.25);}}
-        12%{{opacity:1;transform:translate(0,0) translate(-50%,-50%) scale(1);}}
-        60%{{opacity:1;transform:translate(0,0) translate(-50%,-50%) scale(1);}}
-        92%{{opacity:1;transform:translate(max(-292px,calc(76px - 50vw)),
-                       calc(135px - 50vh)) translate(-50%,-50%) scale(0.35);}}
-        100%{{opacity:0;transform:translate(max(-292px,calc(76px - 50vw)),
-                       calc(135px - 50vh)) translate(-50%,-50%) scale(0.35);}}
+    @keyframes bvInner{{
+        0%{{opacity:0;transform:scale(1.28);}}
+        14%{{opacity:1;transform:scale(1);}}
+        68%{{opacity:1;transform:scale(1);}}
+        100%{{opacity:1;transform:scale(0.9);}}
     }}
-    /* Nome: abaixo do centro -> nome do cabeçalho (à direita do símbolo) */
-    @keyframes bvNome{{
-        0%{{opacity:0;transform:translate(0,170px) translate(-50%,-50%) scale(1.25);}}
-        12%{{opacity:1;transform:translate(0,170px) translate(-50%,-50%) scale(1);}}
-        60%{{opacity:1;transform:translate(0,170px) translate(-50%,-50%) scale(1);}}
-        92%{{opacity:1;transform:translate(max(-168px,calc(200px - 50vw)),
-                       calc(145px - 50vh)) translate(-50%,-50%) scale(0.47);}}
-        100%{{opacity:0;transform:translate(max(-168px,calc(200px - 50vw)),
-                       calc(145px - 50vh)) translate(-50%,-50%) scale(0.47);}}
-    }}
-    .bv-overlay{{position:fixed;inset:0;z-index:99999;
+    .bv-overlay{{position:fixed;inset:0;z-index:99999;display:flex;
+        align-items:center;justify-content:center;
         background:radial-gradient(1200px 720px at 50% 32%,
                    #0C2C4B 0%,#08203A 45%,#061528 100%);
-        animation:bvOverlay 4s ease-in-out forwards;}}
-    .bv-sym{{position:fixed;left:50%;top:50%;z-index:100000;
-        animation:bvSym 4s cubic-bezier(.55,0,.2,1) forwards;}}
-    .bv-nome{{position:fixed;left:50%;top:50%;z-index:100000;
-        font-size:5rem;font-weight:800;color:#FFFFFF;letter-spacing:0.2em;
+        animation:bvOverlay 3.6s ease-in-out forwards;}}
+    .bv-inner{{display:flex;flex-direction:column;align-items:center;gap:1.9rem;
+        animation:bvInner 3.6s cubic-bezier(.5,0,.2,1) forwards;}}
+    .bv-nome{{font-size:5rem;font-weight:800;color:#FFFFFF;letter-spacing:0.2em;
         white-space:nowrap;
         text-shadow:0 0 14px rgba(255,255,255,0.5),
                     0 0 42px rgba(65,195,224,0.7),
-                    0 0 84px rgba(65,195,224,0.4);
-        animation:bvNome 4s cubic-bezier(.55,0,.2,1) forwards;}}
-    @media (prefers-reduced-motion:reduce){{.bv-overlay,.bv-sym,.bv-nome{{display:none;}}}}
+                    0 0 84px rgba(65,195,224,0.4);}}
+    @media (prefers-reduced-motion:reduce){{.bv-overlay{{display:none;}}}}
     </style>
-    <div class="bv-overlay"></div>
-    <div class="bv-sym">{simbolo_svg(200, "gAlbv")}</div>
-    <div class="bv-nome">ALTER</div>
+    <div class="bv-overlay">
+        <div class="bv-inner">
+            {simbolo_svg(200, "gAlbv")}
+            <div class="bv-nome">ALTER</div>
+        </div>
+    </div>
     """
 
 
