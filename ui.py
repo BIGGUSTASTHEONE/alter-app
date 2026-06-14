@@ -198,7 +198,7 @@ def simbolo_svg(tamanho: int = 60, fid: str = "gAlt") -> str:
         "@keyframes altGlow_FID{0%,55%{filter:drop-shadow(0 0 0 rgba(65,195,224,0));}"
         "100%{filter:drop-shadow(0 0 5px rgba(65,195,224,0.7));}}"
         "@keyframes altPulse_FID{0%,100%{filter:drop-shadow(0 0 5px rgba(65,195,224,0.7));}"
-        "50%{filter:drop-shadow(0 0 7px rgba(65,195,224,0.85));}}"
+        "50%{filter:drop-shadow(0 0 10px rgba(65,195,224,0.95));}}"
         ".altA_FID{animation:altInA_FID 2.4s cubic-bezier(.25,.1,.25,1) both;}"
         ".altB_FID{animation:altInB_FID 2.4s cubic-bezier(.25,.1,.25,1) both;}"
         ".altG_FID{animation:altGlow_FID 2.6s ease-in-out both,"
