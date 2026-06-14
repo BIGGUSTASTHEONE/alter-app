@@ -268,14 +268,17 @@ def tela_boas_vindas() -> str:
     return f"""
     <style>
     @keyframes bvOverlay{{
-        0%,72%{{opacity:1;}}
+        0%,82%{{opacity:1;}}
         100%{{opacity:0;visibility:hidden;}}
     }}
     @keyframes bvInner{{
-        0%{{opacity:0;transform:scale(1.35);}}
-        12%{{opacity:1;transform:scale(1);}}
-        72%{{opacity:1;transform:scale(1);}}
-        100%{{opacity:0;transform:scale(0.16) translateY(-46vh);}}
+        0%{{opacity:0;transform:translate(0,0) scale(1.35);}}
+        12%{{opacity:1;transform:translate(0,0) scale(1);}}
+        64%{{opacity:1;transform:translate(0,0) scale(1);}}
+        92%{{opacity:1;transform:translate(max(-320px,calc(56px - 50vw)),
+                                            calc(118px - 50vh)) scale(0.32);}}
+        100%{{opacity:0;transform:translate(max(-320px,calc(56px - 50vw)),
+                                            calc(118px - 50vh)) scale(0.32);}}
     }}
     .bv-overlay{{position:fixed;inset:0;z-index:99999;display:flex;
         flex-direction:column;align-items:center;justify-content:center;gap:2rem;
