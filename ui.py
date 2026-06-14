@@ -227,11 +227,24 @@ def simbolo_svg(tamanho: int = 60, fid: str = "gAlt") -> str:
 
 def cabecalho() -> str:
     return f"""
+    <style>
+    @keyframes alterNomePulse{{
+        0%,100%{{text-shadow:0 0 7px rgba(255,255,255,0.35),
+                             0 0 18px rgba(65,195,224,0.50),
+                             0 0 34px rgba(65,195,224,0.32);}}
+        50%{{text-shadow:0 0 9px rgba(255,255,255,0.5),
+                         0 0 24px rgba(65,195,224,0.72),
+                         0 0 46px rgba(65,195,224,0.5);}}
+    }}
+    .alter-nome{{animation:alterNomePulse 6s ease-in-out 2.6s infinite;}}
+    @media (prefers-reduced-motion:reduce){{.alter-nome{{animation:none;}}}}
+    </style>
     <div style="display:flex;align-items:center;gap:20px;padding:1.6rem 0 1.5rem;
                 border-bottom:1px solid rgba(65,195,224,0.22);margin-bottom:0.5rem;">
         <div style="filter:drop-shadow(0 8px 22px rgba(65,195,224,0.30));">{simbolo_svg(70, "gAlcab")}</div>
         <div style="display:inline-block;">
-            <div style="font-size:2.35rem;font-weight:800;letter-spacing:0.10em;line-height:1;
+            <div class="alter-nome"
+                 style="font-size:2.35rem;font-weight:800;letter-spacing:0.10em;line-height:1;
                         color:#FFFFFF;
                         text-shadow:0 0 7px rgba(255,255,255,0.35),
                                     0 0 18px rgba(65,195,224,0.50),
