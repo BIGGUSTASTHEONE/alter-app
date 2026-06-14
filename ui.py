@@ -23,9 +23,9 @@ CIANO    = "#41c3e0"   # acento estrutural (luminoso sobre fundo escuro)
 TXT      = "#EAF2F8"   # texto primário sobre vidro escuro
 TXT_DIM  = "#9FB3C8"   # texto secundário
 TXT_MUTE = "#6B7E92"   # texto terciário / notas
-VERDE    = "#34D399"   # confortável  (brilhante p/ fundo escuro)
-AMBAR    = "#FBBF24"   # dentro da norma
-VERMELHO = "#F87171"   # abaixo da norma
+VERDE    = "#34E0C8"   # confortável      (aqua-turquesa, frio p/ condizer com o cian)
+AMBAR    = "#F5C84C"   # dentro da norma  (ouro frio)
+VERMELHO = "#F2607E"   # abaixo da norma  (magenta-coral)
 
 # Receita de vidro reutilizada nos cards
 _GLASS = (
@@ -286,16 +286,18 @@ def card_racio(r: dict) -> str:
         </div>
         <div style="font-size:3.4rem;font-weight:800;color:{TXT};
                     line-height:1;letter-spacing:-0.02em;margin-bottom:8px;
-                    text-shadow:0 0 26px rgba(65,195,224,0.30);">
+                    text-shadow:0 0 30px {cor}59,0 0 12px {cor}33;">
             {r['valor']}
         </div>
         <div style="font-size:0.74rem;color:{TXT_MUTE};margin-bottom:18px;font-style:italic;">
             {r['formula']}
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="background:{cor}22;color:{cor};border:1px solid {cor}55;
+            <span style="background:{cor}22;color:{cor};border:1px solid {cor}66;
                          padding:5px 13px;border-radius:20px;font-size:0.74rem;
-                         font-weight:700;letter-spacing:0.04em;">
+                         font-weight:700;letter-spacing:0.04em;
+                         box-shadow:0 0 16px {cor}55,inset 0 0 10px {cor}1F;
+                         text-shadow:0 0 12px {cor}AA;">
                 {label.upper()}
             </span>
             <span style="font-size:0.9rem;color:{TXT_DIM};">
