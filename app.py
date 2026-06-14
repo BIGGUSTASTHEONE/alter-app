@@ -102,6 +102,9 @@ def gerar_diagnostico(racios, categoria, setor, dimensao, nivel_linguagem):
 _ICONE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "alter-app-icon.svg")
 st.set_page_config(page_title="Alter", page_icon=_ICONE, layout="centered")
 st.markdown(ui.CSS, unsafe_allow_html=True)
+if "boas_vindas" not in st.session_state:
+    st.markdown(ui.tela_boas_vindas(), unsafe_allow_html=True)
+    st.session_state.boas_vindas = True
 st.markdown(ui.cabecalho(), unsafe_allow_html=True)
 
 if "dados_extraidos" not in st.session_state:

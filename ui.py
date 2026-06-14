@@ -259,6 +259,46 @@ def cabecalho() -> str:
     """
 
 
+def tela_boas_vindas() -> str:
+    """Ecrã de boas-vindas (uma vez por sessão): os dois losangos surgem
+    enormes e juntam-se, com o nome ALTER em grande, e depois o conjunto
+    encolhe em direção ao cabeçalho e desvanece, revelando o site.
+    O encaixe dos losangos vem do próprio `simbolo_svg` (2.4s); o overlay
+    só começa a encolher depois disso (72% de 4s ≈ 2.9s)."""
+    return f"""
+    <style>
+    @keyframes bvOverlay{{
+        0%,72%{{opacity:1;}}
+        100%{{opacity:0;visibility:hidden;}}
+    }}
+    @keyframes bvInner{{
+        0%{{opacity:0;transform:scale(1.35);}}
+        12%{{opacity:1;transform:scale(1);}}
+        72%{{opacity:1;transform:scale(1);}}
+        100%{{opacity:0;transform:scale(0.16) translateY(-46vh);}}
+    }}
+    .bv-overlay{{position:fixed;inset:0;z-index:99999;display:flex;
+        flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+        background:radial-gradient(1200px 720px at 50% 32%,
+                   #0C2C4B 0%,#08203A 45%,#061528 100%);
+        animation:bvOverlay 4s ease-in-out forwards;}}
+    .bv-inner{{display:flex;flex-direction:column;align-items:center;gap:1.8rem;
+        animation:bvInner 4s cubic-bezier(.55,0,.2,1) forwards;}}
+    .bv-nome{{font-size:5rem;font-weight:800;color:#FFFFFF;letter-spacing:0.2em;
+        text-shadow:0 0 14px rgba(255,255,255,0.5),
+                    0 0 42px rgba(65,195,224,0.7),
+                    0 0 84px rgba(65,195,224,0.4);}}
+    @media (prefers-reduced-motion:reduce){{.bv-overlay{{display:none;}}}}
+    </style>
+    <div class="bv-overlay">
+        <div class="bv-inner">
+            {simbolo_svg(220, "gAlbv")}
+            <div class="bv-nome">ALTER</div>
+        </div>
+    </div>
+    """
+
+
 def step_header(titulo: str) -> str:
     return f"""
     <div style="display:flex;align-items:center;gap:14px;margin:2.2rem 0 1.2rem;">
