@@ -277,20 +277,20 @@ def tela_boas_vindas() -> str:
         0%{{opacity:0;transform:translate(0,0) translate(-50%,-50%) scale(1.25);}}
         12%{{opacity:1;transform:translate(0,0) translate(-50%,-50%) scale(1);}}
         60%{{opacity:1;transform:translate(0,0) translate(-50%,-50%) scale(1);}}
-        92%{{opacity:1;transform:translate(max(-362px,calc(6px - 50vw)),
-                       calc(118px - 50vh)) translate(-50%,-50%) scale(0.35);}}
-        100%{{opacity:0;transform:translate(max(-362px,calc(6px - 50vw)),
-                       calc(118px - 50vh)) translate(-50%,-50%) scale(0.35);}}
+        92%{{opacity:1;transform:translate(max(-292px,calc(76px - 50vw)),
+                       calc(135px - 50vh)) translate(-50%,-50%) scale(0.35);}}
+        100%{{opacity:0;transform:translate(max(-292px,calc(76px - 50vw)),
+                       calc(135px - 50vh)) translate(-50%,-50%) scale(0.35);}}
     }}
     /* Nome: abaixo do centro -> nome do cabeçalho (à direita do símbolo) */
     @keyframes bvNome{{
         0%{{opacity:0;transform:translate(0,170px) translate(-50%,-50%) scale(1.25);}}
         12%{{opacity:1;transform:translate(0,170px) translate(-50%,-50%) scale(1);}}
         60%{{opacity:1;transform:translate(0,170px) translate(-50%,-50%) scale(1);}}
-        92%{{opacity:1;transform:translate(max(-233px,calc(135px - 50vw)),
-                       calc(112px - 50vh)) translate(-50%,-50%) scale(0.47);}}
-        100%{{opacity:0;transform:translate(max(-233px,calc(135px - 50vw)),
-                       calc(112px - 50vh)) translate(-50%,-50%) scale(0.47);}}
+        92%{{opacity:1;transform:translate(max(-168px,calc(200px - 50vw)),
+                       calc(145px - 50vh)) translate(-50%,-50%) scale(0.47);}}
+        100%{{opacity:0;transform:translate(max(-168px,calc(200px - 50vw)),
+                       calc(145px - 50vh)) translate(-50%,-50%) scale(0.47);}}
     }}
     .bv-overlay{{position:fixed;inset:0;z-index:99999;
         background:radial-gradient(1200px 720px at 50% 32%,
