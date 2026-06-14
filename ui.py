@@ -188,17 +188,38 @@ def simbolo_svg(tamanho: int = 60, fid: str = "gAlt") -> str:
     """Símbolo da marca (dois losangos entrelaçados) como SVG inline.
     `fid` tem de ser único por instância na página — ids de filtro repetidos
     no DOM fazem o glow falhar em alguns browsers."""
+    css = (
+        "<style>"
+        ".altA_FID,.altB_FID{transform-box:view-box;transform-origin:center;}"
+        "@keyframes altInA_FID{0%{transform:translate(-18px,8px);opacity:0;}"
+        "100%{transform:translate(0,0);opacity:1;}}"
+        "@keyframes altInB_FID{0%{transform:translate(18px,-8px);opacity:0;}"
+        "100%{transform:translate(0,0);opacity:1;}}"
+        "@keyframes altGlow_FID{0%,60%{filter:drop-shadow(0 0 0 rgba(65,195,224,0));}"
+        "100%{filter:drop-shadow(0 0 5px rgba(65,195,224,0.8));}}"
+        "@keyframes altPulse_FID{0%,100%{filter:drop-shadow(0 0 4px rgba(65,195,224,0.5));}"
+        "50%{filter:drop-shadow(0 0 7px rgba(65,195,224,0.8));}}"
+        ".altA_FID{animation:altInA_FID 2.4s cubic-bezier(.25,.1,.25,1) both;}"
+        ".altB_FID{animation:altInB_FID 2.4s cubic-bezier(.25,.1,.25,1) both;}"
+        ".altG_FID{animation:altGlow_FID 2.6s ease-in-out both,"
+        "altPulse_FID 6s ease-in-out 2.6s infinite;}"
+        "@media (prefers-reduced-motion:reduce){"
+        ".altA_FID,.altB_FID,.altG_FID{animation:none;}"
+        ".altA_FID,.altB_FID{opacity:1;transform:none;}}"
+        "</style>"
+    ).replace("FID", fid)
     return (
-        f'<svg width="{tamanho}" height="{tamanho}" viewBox="0 0 100 100" '
-        f'role="img" aria-label="ALTER" style="flex:none;display:block;">'
+        f'<svg class="altG_{fid}" width="{tamanho}" height="{tamanho}" viewBox="0 0 100 100" '
+        f'role="img" aria-label="ALTER" style="flex:none;display:block;overflow:visible;">'
+        f'{css}'
         f'<defs><filter id="{fid}" x="-40%" y="-40%" width="180%" height="180%">'
         f'<feGaussianBlur stdDeviation="2.2" result="b"/>'
         f'<feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>'
         f'</filter></defs>'
         f'<g filter="url(#{fid})">'
-        f'<polygon points="40,26 70,56 40,86 10,56" fill="{CIANO}" fill-opacity="0.14" '
+        f'<polygon class="altA_{fid}" points="40,26 70,56 40,86 10,56" fill="{CIANO}" fill-opacity="0.14" '
         f'stroke="{CIANO}" stroke-width="3" stroke-linejoin="round"/>'
-        f'<polygon points="62,14 92,44 62,74 32,44" fill="{CIANO}" fill-opacity="0.18" '
+        f'<polygon class="altB_{fid}" points="62,14 92,44 62,74 32,44" fill="{CIANO}" fill-opacity="0.18" '
         f'stroke="{CIANO}" stroke-width="3" stroke-linejoin="round"/>'
         f'</g></svg>'
     )
