@@ -230,7 +230,8 @@ def step_header(titulo: str) -> str:
                     border:2px solid {CIANO};
                     box-shadow:0 0 12px rgba(65,195,224,0.55);"></div>
         <div style="font-size:1.08rem;font-weight:700;color:{TXT};
-                    letter-spacing:-0.01em;">{titulo}</div>
+                    letter-spacing:-0.01em;
+                    text-shadow:0 0 18px rgba(65,195,224,0.28);">{titulo}</div>
     </div>
     """
 
@@ -405,17 +406,20 @@ def _md_to_html(texto: str) -> str:
         if s.startswith("### "):
             html_parts.append(
                 f'<h4 style="margin:1.1em 0 0.3em;color:{CIANO};'
-                f'font-size:1.18rem;font-weight:700;">{_negrito(s[4:])}</h4>'
+                f'font-size:1.18rem;font-weight:700;'
+                f'text-shadow:0 0 16px {CIANO}66;">{_negrito(s[4:])}</h4>'
             )
         elif s.startswith("## "):
             html_parts.append(
                 f'<h3 style="margin:1.2em 0 0.4em;color:{TXT};'
-                f'font-size:1.32rem;font-weight:700;">{_negrito(s[3:])}</h3>'
+                f'font-size:1.32rem;font-weight:700;'
+                f'text-shadow:0 0 20px rgba(65,195,224,0.26);">{_negrito(s[3:])}</h3>'
             )
         elif s.startswith("# "):
             html_parts.append(
                 f'<h2 style="margin:0 0 0.5em;color:{TXT};font-size:1.55rem;'
-                f'font-weight:800;letter-spacing:-0.01em;">{_negrito(s[2:])}</h2>'
+                f'font-weight:800;letter-spacing:-0.01em;'
+                f'text-shadow:0 0 26px rgba(65,195,224,0.32);">{_negrito(s[2:])}</h2>'
             )
         elif s == "---":
             html_parts.append(
