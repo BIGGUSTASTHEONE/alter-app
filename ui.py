@@ -211,7 +211,10 @@ def cabecalho() -> str:
         <div style="filter:drop-shadow(0 8px 22px rgba(65,195,224,0.30));">{simbolo_svg(70, "gAlcab")}</div>
         <div style="display:inline-block;">
             <div style="font-size:2.35rem;font-weight:800;letter-spacing:0.10em;line-height:1;
-                        color:#FFFFFF;">ALTER</div>
+                        color:#FFFFFF;
+                        text-shadow:0 0 8px rgba(255,255,255,0.45),
+                                    0 0 22px rgba(65,195,224,0.65),
+                                    0 0 42px rgba(65,195,224,0.45);">ALTER</div>
             <div style="width:100%;height:3px;border-radius:3px;margin-top:0.55rem;
                         background:{CIANO};box-shadow:0 0 14px rgba(65,195,224,0.7);"></div>
             <div style="font-size:0.9rem;color:{TXT_DIM};margin-top:0.65rem;letter-spacing:0.01em;">
