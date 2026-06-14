@@ -277,9 +277,9 @@ def tela_boas_vindas() -> str:
         0%{{opacity:0;transform:translate(0,0) translate(-50%,-50%) scale(1.25);}}
         12%{{opacity:1;transform:translate(0,0) translate(-50%,-50%) scale(1);}}
         60%{{opacity:1;transform:translate(0,0) translate(-50%,-50%) scale(1);}}
-        92%{{opacity:1;transform:translate(max(-317px,calc(51px - 50vw)),
+        92%{{opacity:1;transform:translate(max(-362px,calc(6px - 50vw)),
                        calc(118px - 50vh)) translate(-50%,-50%) scale(0.35);}}
-        100%{{opacity:0;transform:translate(max(-317px,calc(51px - 50vw)),
+        100%{{opacity:0;transform:translate(max(-362px,calc(6px - 50vw)),
                        calc(118px - 50vh)) translate(-50%,-50%) scale(0.35);}}
     }}
     /* Nome: abaixo do centro -> nome do cabeçalho (à direita do símbolo) */
@@ -287,9 +287,9 @@ def tela_boas_vindas() -> str:
         0%{{opacity:0;transform:translate(0,170px) translate(-50%,-50%) scale(1.25);}}
         12%{{opacity:1;transform:translate(0,170px) translate(-50%,-50%) scale(1);}}
         60%{{opacity:1;transform:translate(0,170px) translate(-50%,-50%) scale(1);}}
-        92%{{opacity:1;transform:translate(max(-188px,calc(180px - 50vw)),
+        92%{{opacity:1;transform:translate(max(-233px,calc(135px - 50vw)),
                        calc(112px - 50vh)) translate(-50%,-50%) scale(0.47);}}
-        100%{{opacity:0;transform:translate(max(-188px,calc(180px - 50vw)),
+        100%{{opacity:0;transform:translate(max(-233px,calc(135px - 50vw)),
                        calc(112px - 50vh)) translate(-50%,-50%) scale(0.47);}}
     }}
     .bv-overlay{{position:fixed;inset:0;z-index:99999;
