@@ -133,6 +133,17 @@ hr {{
     border: 1px solid rgba(255,255,255,0.12) !important;
     background: rgba(255,255,255,0.05) !important;
     backdrop-filter: blur(8px) !important;
+    transition: all 0.18s ease !important;
+}}
+.stSelectbox > div > div:hover {{
+    border-color: rgba(65,195,224,0.55) !important;
+    background: rgba(65,195,224,0.07) !important;
+    box-shadow: 0 0 16px rgba(65,195,224,0.30) !important;
+}}
+.stSelectbox > div > div:focus-within {{
+    border-color: {CIANO} !important;
+    box-shadow: 0 0 0 3px rgba(65,195,224,0.22),
+                0 0 18px rgba(65,195,224,0.35) !important;
 }}
 
 /* File uploader */
