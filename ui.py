@@ -195,14 +195,11 @@ def simbolo_svg(tamanho: int = 60, fid: str = "gAlt") -> str:
         "100%{transform:translate(0,0);opacity:1;}}"
         "@keyframes altInB_FID{0%{transform:translate(18px,-8px);opacity:0;}"
         "100%{transform:translate(0,0);opacity:1;}}"
-        "@keyframes altGlow_FID{0%,55%{filter:drop-shadow(0 0 0 rgba(65,195,224,0));}"
-        "100%{filter:drop-shadow(0 0 9px rgba(65,195,224,0.9));}}"
-        "@keyframes altPulse_FID{0%,100%{filter:drop-shadow(0 0 9px rgba(65,195,224,0.9));}"
-        "50%{filter:drop-shadow(0 0 1px rgba(65,195,224,0.08));}}"
+        "@keyframes altPulse_FID{0%,100%{filter:drop-shadow(0 0 1px rgba(65,195,224,0.08));}"
+        "50%{filter:drop-shadow(0 0 9px rgba(65,195,224,0.9));}}"
         ".altA_FID{animation:altInA_FID 2.4s cubic-bezier(.25,.1,.25,1) both;}"
         ".altB_FID{animation:altInB_FID 2.4s cubic-bezier(.25,.1,.25,1) both;}"
-        ".altG_FID{animation:altGlow_FID 2.6s ease-in-out both,"
-        "altPulse_FID 9s ease-in-out 2.6s infinite;}"
+        ".altG_FID{animation:altPulse_FID 9s ease-in-out 2.4s infinite both;}"
         "@media (prefers-reduced-motion:reduce){"
         ".altA_FID,.altB_FID,.altG_FID{animation:none;}"
         ".altA_FID,.altB_FID{opacity:1;transform:none;}}"
@@ -228,22 +225,15 @@ def simbolo_svg(tamanho: int = 60, fid: str = "gAlt") -> str:
 def cabecalho() -> str:
     return f"""
     <style>
-    @keyframes alterNomeIn{{
-        0%{{text-shadow:none;}}
-        100%{{text-shadow:0 0 9px rgba(255,255,255,0.5),
-                          0 0 24px rgba(65,195,224,0.72),
-                          0 0 46px rgba(65,195,224,0.5);}}
-    }}
     @keyframes alterNomePulse{{
-        0%,100%{{text-shadow:0 0 9px rgba(255,255,255,0.5),
-                             0 0 24px rgba(65,195,224,0.72),
-                             0 0 46px rgba(65,195,224,0.5);}}
-        50%{{text-shadow:0 0 3px rgba(255,255,255,0.1),
-                         0 0 7px rgba(65,195,224,0.1),
-                         0 0 14px rgba(65,195,224,0.07);}}
+        0%,100%{{text-shadow:0 0 3px rgba(255,255,255,0.1),
+                             0 0 7px rgba(65,195,224,0.1),
+                             0 0 14px rgba(65,195,224,0.07);}}
+        50%{{text-shadow:0 0 9px rgba(255,255,255,0.5),
+                         0 0 24px rgba(65,195,224,0.72),
+                         0 0 46px rgba(65,195,224,0.5);}}
     }}
-    .alter-nome{{animation:alterNomeIn 2.6s ease-in-out both,
-                          alterNomePulse 9s ease-in-out 2.6s infinite;}}
+    .alter-nome{{animation:alterNomePulse 9s ease-in-out 2.4s infinite both;}}
     @media (prefers-reduced-motion:reduce){{.alter-nome{{animation:none;}}}}
     </style>
     <div style="display:flex;align-items:center;gap:20px;padding:1.6rem 0 1.5rem;
